@@ -46,10 +46,8 @@ O sistema:
 
 ## Membros da Equipe 
 
-| Membro | 
-|--------|--------|----------------------------|
- Elder Nunes Gonçalves |
- Felipe dos Santos Rodrigues | 
- Guilherme Giuliangeli Monteiro | 
+- Elder Nunes Gonçalves 
+- Felipe dos Santos Rodrigues 
+- Guilherme Giuliangeli Monteiro  
 
 ---
