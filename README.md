@@ -48,8 +48,8 @@ O sistema:
 
 | Membro | 
 |--------|--------|----------------------------|
-| Elder Nunes Gonçalves |
-| Felipe dos Santos Rodrigues | 
-| Guilherme Giuliangeli Monteiro | 
+ Elder Nunes Gonçalves |
+ Felipe dos Santos Rodrigues | 
+ Guilherme Giuliangeli Monteiro | 
 
 ---
