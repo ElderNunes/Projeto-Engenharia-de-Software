@@ -1,53 +1,88 @@
-# InvestPlan - Planejador de Investimento para Iniciantes
+# InvestPlan - Planejador Financeiro para Iniciantes
 
 ## Visão Geral
 
-**InvestPlan** é um sistema Python que auxilia jovens adultos sem conhecimento prévio de investimentos a criar um plano personalizado e viável para começar a investir. O sistema recebe dados financeiros estruturados do usuário, analisa sua situação e recomenda uma estratégia de alocação de recursos com projeções realistas de crescimento.
+O InvestPlan é um sistema Python desenvolvido para auxiliar adultos sem conhecimento financeiro prévio a assumir o controle de suas finanças e criar um plano viável para poupar e alocar recursos. O sistema atua em duas frentes: primeiro, analisa e otimiza o orçamento mensal (controle de gastos) e, em seguida, recomenda uma estratégia de alocação de investimentos com projeções realistas de crescimento baseadas na capacidade real de poupança do usuário.
 
 ---
 
 ## Problema que Resolve
 
 ### Situação-Problema
-Jovens adultos (18-30 anos) frequentemente desejam iniciar investimentos, mas enfrentam barreiras significativas:
-- **Falta de conhecimento**: não sabem diferenciar tipos de investimento (renda fixa, ações, fundos)
-- **Medo de perder dinheiro**: receio de tomar decisões inadequadas sem orientação
-- **Falta de clareza financeira**: não conseguem calcular realistically quanto conseguem poupar mensalmente
-- **Paralelismo**: existem muitos recursos online, mas não um sistema que agregue seus dados e ofereça recomendações personalizadas
+Adultos em fase de estruturação financeira (especialmente jovens iniciando suas carreiras) frequentemente desejam organizar suas finanças e investir, mas enfrentam barreiras significativas:
+- Descontrole orçamentário e dificuldade para calcular o valor real que conseguem poupar mensalmente.
+- Falta de conhecimento prático para diferenciar tipos de investimento (renda fixa, ações, fundos).
+- Receio de tomar decisões financeiras inadequadas sem uma orientação objetiva.
+- Paralisação por análise devido ao excesso de informações desestruturadas na internet.
 
-### Como InvestPlan Resolve
-O sistema:
-1. **Coleta dados estruturados** do usuário (renda, gastos, objetivo, perfil de risco)
-2. **Processa e analisa** a situação financeira de forma objetiva
-3. **Gera recomendações personalizadas** de alocação de recursos por tipo de investimento
-4. **Projeta crescimento** com base em diferentes cenários
-5. **Produz relatório claro** que explica cada recomendação, reduzindo a percepção de risco
+### Fontes Reais e Justificativa
+A relevância do problema para o público-alvo e a necessidade de uma ferramenta de planejamento são sustentadas por dados concretos do mercado brasileiro:
+
+1. **Dados (Estudo de Investidores Pessoa Física da B3):** A B3 (Bolsa de Valores do Brasil) publica dados detalhados sobre a evolução e o perfil do investidor pessoa física. O levantamento aponta um processo de rejuvenescimento acelerado na base de investidores da bolsa, onde o público com até 35 anos de idade já representa 60% do total. O mercado tem acompanhado o impacto da democratização promovida por plataformas digitais, que facilitaram a entrada de pequenos investidores em busca de oportunidades. Esse cenário mostra que iniciantes estão investindo com aportes mais diluídos, tornando as ferramentas de educação financeira e planejamento essenciais para estruturar a alocação de ativos.
+   - *Fonte (Portal Oficial):* [B3 - Pessoas Físicas (Dados de Mercado)](https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/consultas/mercado-a-vista/dados-de-mercado/pessoas-fisicas/)
+
+2. **Reportagem/Artigo (Raio X do Investidor Brasileiro - ANBIMA):** O relatório aponta que os canais digitais (como YouTube e Instagram) são as principais fontes de informação de quem investe, com forte adesão das novas gerações. Contudo, **um terço da população (31%) não possui dinheiro guardado para imprevistos (reserva financeira)**. Isso valida a necessidade do sistema InvestPlan focar na construção e cálculo de reservas de emergência (renda fixa) antes de sugerir ativos de risco.
+   - *Fonte (Página):* [Raio X do Investidor Brasileiro](https://www.anbima.com.br/pt_br/especial/raio-x-do-investidor-brasileiro.htm)
+   - *Fonte (PDF):* [Raio X do Investidor - 9ª Edição](https://www.anbima.com.br/data/files/BE/05/B0/55/1EABD91008E6DAD9F82BA2A8/Raio-X-do-Investidor-9-edicao.pdf)
+
+3. **Fórum Técnico (Comunidade de Finanças):** Em discussões diárias nas comunidades abertas, os iniciantes relatam a chamada "paralisia por análise". Há um excesso de recomendações desconexas vindas de influenciadores (que representam a fonte de aprendizado para 73% dos novos investidores, segundo a B3). Os usuários do fórum buscam ativamente o que o InvestPlan propõe: regras matemáticas e calculadoras que digam de forma fria e estruturada o que fazer com seus primeiros aportes.
+   - *Fonte:* [Comunidade r/investimentos no Reddit](https://www.reddit.com/r/investimentos/)
+
+### Como o InvestPlan Resolve
+O sistema realiza as seguintes etapas:
+1. **Otimização Orçamentária:** Coleta e categoriza os gastos mensais do usuário contra a sua renda, gerando um diagnóstico de saúde financeira e calculando a capacidade real de poupança (Módulo de Controle de Gastos).
+2. **Coleta de Perfil:** Avalia o perfil de risco e os objetivos de curto, médio e longo prazo do usuário.
+3. **Análise de Alocação:** Processa a situação financeira de forma objetiva através do terminal.
+4. **Recomendações Personalizadas:** Gera uma estratégia de alocação de recursos por tipo de ativo (Tesouro Direto, CDBs, ETFs) usando padrões de projeto (ex: *Strategy*).
+5. **Relatório Final:** Produz um documento claro que explica cada recomendação e projeta o crescimento do patrimônio, mitigando a percepção de risco.
+
+### Viabilidade do Escopo (Tempo Disponível)
+O conjunto de funcionalidades proposto foi intencionalmente delimitado para caber no ciclo de 4 Sprints da disciplina, priorizando a qualidade da engenharia sobre a quantidade de recursos. A viabilidade de entrega no tempo disponível é garantida pelas seguintes decisões arquiteturais:
+1. **Interface de Linha de Comando (CLI):** O sistema rodará 100% no terminal, eliminando o tempo de desenvolvimento de *front-end* ou interfaces gráficas (GUI) e mantendo o foco na lógica de negócio e nos Padrões de Projeto (ex: *Strategy*).
+2. **Armazenamento Local Estruturado:** Para evitar o *overhead* de configuração e *deploy* de bancos de dados em nuvem, a persistência e entrada de dados ocorrerá via manipulação de arquivos estruturados locais (ex: `.json` ou `.csv`).
+3. **Foco no Fluxo Principal (*Core Flow*):** O escopo restringe-se a um único fluxo de alto valor (Receber Dados -> Otimizar Orçamento -> Recomendar Alocação -> Gerar Relatório). Funcionalidades acessórias, como integração com APIs de cotações em tempo real ou sistemas de autenticação, foram deliberadamente deixadas fora do escopo inicial para garantir a entrega de um protótipo funcional, coberto por testes automatizados, até 19/06.
 
 ---
 
 ## Público-Alvo
 
-**Perfil Primário:** Jovens adultos entre 18 e 30 anos
+**Perfil Primário:** Adultos em início de jornada de organização financeira (com forte aderência entre jovens profissionais, mas sem limite restrito de idade).
 
 **Características:**
-- Renda mensal estável (CLT, primeiros anos de carreira, mesada estruturada)
-- Pouca ou nenhuma experiência com investimentos
-- Desejo de começar a investir mas com receio/dúvidas
-- Acesso a computador e disposição para usar ferramentas de linha de comando
-- Motivados por educação financeira
+- Renda mensal estabelecida (CLT, prestação de serviços, bolsas de pesquisa ou transição de carreira).
+- Pouca ou nenhuma experiência prática com controle rigoroso de caixa e mercado financeiro.
+- Desejo de sair da inércia, criar uma reserva de emergência e começar a investir de forma segura.
+- Acesso a um dispositivo básico (computador ou smartphone) para gerenciar suas finanças.
 
 **Exemplos de usuários:**
-- Recém-formado que conseguiu seu primeiro emprego
-- Jovem profissional que herdou um valor e quer investir
-- Estudante de pós-graduação com bolsa que quer diversificar rendimentos
-- Pessoa que recebeu bônus e quer aplicar de forma inteligente
+- Recém-formado buscando organizar o primeiro salário.
+- Profissional de 35 anos que percebeu a necessidade de criar uma reserva de emergência e não sabe por onde começar.
+- Pessoa que recebeu um acerto trabalhista ou bônus e quer planejar o uso desse dinheiro de forma inteligente, sem gastar tudo por impulso.
 
 ---
 
-## Membros da Equipe 
+## Membros da Equipe e Dinâmica de Trabalho
 
-- Elder Nunes Gonçalves 
-- Felipe dos Santos Rodrigues 
-- Guilherme Giuliangeli Monteiro  
+- Elder Nunes Gonçalves
+- Felipe dos Santos Rodrigues
+- Guilherme Giuliangeli Monteiro
 
----
+Para garantir a participação integral e o desenvolvimento de todas as competências de engenharia por todos os membros, a equipe adotou uma dinâmica de **Liderança Rotativa por Sprint**. Todos os integrantes participarão ativamente da codificação, documentação e testes em todas as fases do projeto, com a seguinte divisão de responsabilidade pelas entregas críticas:
+
+**Sprint 1: Engenharia de Requisitos (22/05 a 26/05)**
+- Felipe: Responsável por liderar a redação e estruturação das Histórias de Usuário e Critérios de Aceite.
+- Elder: Responsável por liderar a Elicitação (pesquisa de mercado e regras de negócio de investimentos/orçamento).
+- Guilherme: Responsável por conduzir a Validação dos requisitos (identificação de ambiguidades e conflitos).
+
+**Sprint 2: Projeto e Arquitetura (29/05 a 02/06)**
+- Felipe: Responsável pelo Diagrama de Arquitetura e justificativa de *trade-offs*.
+- Elder: Responsável por liderar a implementação do esqueleto funcional no Terminal (CLI).
+- Guilherme: Responsável pela documentação dos Padrões de Projeto e Padrões de Qualidade.
+
+**Sprint 3: Desenvolvimento Base (09/06 a 12/06)**
+- Todos os membros: Implementação balanceada das funcionalidades em Python. Cada membro assumirá o ciclo completo (lógica, testes e integração) de pelo menos um módulo do sistema (ex: Módulo de Gastos, Módulo de Alocação, Módulo de Relatório). Qualquer membro estará apto a explicar qualquer parte do código-fonte durante as revisões.
+
+**Sprint 4: Testes e Refatoração (16/06 a 19/06)**
+- Felipe: Responsável pela estratégia e configuração inicial dos Testes Automatizados utilizando o módulo `unittest`.
+- Elder: Responsável por liderar as rodadas de Refatoração do código para melhoria de design.
+- Guilherme: Responsável pela revisão da documentação final e fechamento do repositório.
