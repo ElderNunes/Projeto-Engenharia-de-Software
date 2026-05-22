@@ -25,6 +25,9 @@ A relevância do problema para o público-alvo e a necessidade de uma ferramenta
 2. **Fórum Técnico (Comunidade de Finanças):** Em discussões diárias nas comunidades abertas, os iniciantes relatam a chamada "paralisia por análise". Há um excesso de recomendações desconexas vindas de influenciadores (que representam a fonte de aprendizado para 73% dos novos investidores, segundo a B3). Os usuários do fórum buscam ativamente o que o InvestPlan propõe: regras matemáticas e calculadoras que digam de forma fria e estruturada o que fazer com seus primeiros aportes.
    - *Fonte:* [Comunidade r/investimentos no Reddit](https://www.reddit.com/r/investimentos/)
 
+3. **Relatório Institucional (CVM - Comissão de Valores Mobiliários):** A pesquisa "Perfil e Comportamento dos Investidores 2024", realizada com mais de 1.300 respondentes, aponta que o interesse por educação financeira cresceu 42% entre os investidores brasileiros no último ano, e que a formação de reserva de emergência e aposentadoria é o principal objetivo financeiro dos perfis conservador e moderado — exatamente o público-alvo do InvestPlan.
+   - *Fonte:* [CVM - Perfil e Comportamento dos Investidores 2024](https://www.gov.br/cvm/pt-br/assuntos/noticias/2025/pesquisa-sobre-perfil-do-investidor-brasileiro-aponta-formacao-de-reservas-para-aposentadoria-como-principal-objetivo-de-investimento)
+
 ### Como o InvestPlan Resolve
 O sistema realiza as seguintes etapas:
 1. **Otimização Orçamentária:** Coleta e categoriza os gastos mensais do usuário contra a sua renda, gerando um diagnóstico de saúde financeira e calculando a capacidade real de poupança (Módulo de Controle de Gastos).
