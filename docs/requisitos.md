@@ -24,7 +24,7 @@
 | Sistema Analisado | O que faz | Limitação identificada | O que o InvestPlan resolve |
 |---|---|---|---|
 | Nubank App | Rastreia gastos por categoria, relatórios mensais | Não oferece recomendação de investimento | Integra controle de gastos + alocação de investimentos |
-| GuiaBolso | Agregador de contas + análise de orçamento | Recomendações genéricas sem personalização | Alocação personalizada por perfil de risco |
+| Minhas Economias | Agregador de contas + análise de orçamento | Recomendações genéricas sem personalização | Alocação personalizada por perfil de risco |
 | Calculadoras Online | Simulam crescimento com taxa fixa | Não calculam capacidade de poupança | Integra orçamento → poupança → simulação em um fluxo |
 | Apps de Renda Fixa | Interface para compra de títulos | Não ajudam a estruturar orçamento | Recomenda tipo de ativo (Tesouro vs CDB vs ETF) |
 | Planilhas Excel/Sheets | Controle manual com fórmulas | Requer conhecimento técnico; manual | Automatiza em Python; saída consistente |
@@ -49,8 +49,8 @@
 ### 1.4 Fontes Consultadas na Elicitação
 
 1. **ANBIMA - Raio X do Investidor Brasileiro (9ª Edição)**
-   - 31% da população não possui reserva financeira
-   - 73% dos novos investidores buscam informação em influenciadores digitais
+   - Aproximadamente 31% da população não possui nenhum tipo de reserva financeira.
+   - Forte dependência de canais digitais e influenciadores para tomada de decisão em novos investidores, justificando a necessidade de uma ferramenta técnica e isenta.
 
 2. **CVM - Perfil e Comportamento dos Investidores 2024**
    - Crescimento de 42% no interesse por educação financeira
