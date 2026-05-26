@@ -55,120 +55,99 @@
 
 ---
 
-### HU-01 — [Título da História]
+### HU-01 — Otimização Orçamentária e Cálculo de Sobra
 
-**Como** [tipo de usuário],
-**Quero** [ação ou funcionalidade],
-**Para** [objetivo ou benefício].
+**Como** um adulto em fase de organização financeira,
+**Quero** inserir minha renda mensal e despesas básicas no terminal,
+**Para** descobrir minha capacidade real de poupança mensal.
 
-**Regras de negócio relacionadas:** RN-XX
+**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
 
 **Critérios de Aceite:**
-- [ ] CA-01:
-- [ ] CA-02:
-- [ ] CA-03:
+- [ ] CA-01: O sistema deve solicitar a entrada do valor da renda mensal líquida.
+- [ ] CA-02: O sistema deve permitir que o usuário insira o valor total estimado de gastos.
+- [ ] CA-03: O sistema deve calcular a diferença (Renda - Gastos) e exibir a sobra disponível.
+- [ ] CA-04: Se a sobra calculada for menor ou igual a zero, o sistema deve emitir um aviso de "Orçamento Estourado", bloquear o avanço para a etapa de investimentos e orientar o corte de gastos.
 
-**Prioridade:** | **Sprint prevista:**
+**Prioridade:** Alta | **Sprint prevista:** Sprint 3
 
 ---
 
-### HU-02 — [Título da História]
+### HU-02 — Definição do Perfil de Risco
 
-**Como** [tipo de usuário],
-**Quero** [ação ou funcionalidade],
-**Para** [objetivo ou benefício].
+**Como** um iniciante em investimentos,
+**Quero** responder a um questionário rápido sobre prazos e tolerância a perdas,
+**Para** que o sistema identifique adequadamente o meu perfil de investidor.
 
-**Regras de negócio relacionadas:** RN-XX
+**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
 
 **Critérios de Aceite:**
-- [ ] CA-01:
-- [ ] CA-02:
-- [ ] CA-03:
+- [ ] CA-01: O sistema deve exibir perguntas de múltipla escolha diretamente no terminal.
+- [ ] CA-02: Se o usuário selecionar opções que indicam aversão total à perda de capital ou prazo menor que 1 ano, o perfil deve ser forçado para "Conservador".
+- [ ] CA-03: O sistema deve registrar e exibir o perfil final (Conservador, Moderado ou Arrojado).
 
-**Prioridade:** | **Sprint prevista:**
+**Prioridade:** Alta | **Sprint prevista:** Sprint 3
 
 ---
 
-### HU-03 — [Título da História]
+### HU-03 — Recomendação de Alocação de Recursos (Strategy)
 
-**Como** [tipo de usuário],
-**Quero** [ação ou funcionalidade],
-**Para** [objetivo ou benefício].
+**Como** um usuário com capacidade de poupança positiva,
+**Quero** receber uma sugestão detalhada de onde investir meu dinheiro,
+**Para** começar a investir com segurança de acordo com o meu perfil.
 
-**Regras de negócio relacionadas:** RN-XX
+**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
 
 **Critérios de Aceite:**
-- [ ] CA-01:
-- [ ] CA-02:
-- [ ] CA-03:
+- [ ] CA-01: O sistema deve processar a "sobra mensal" (HU-01) e o perfil (HU-02) para injetar na estratégia correta de cálculo.
+- [ ] CA-02: Para o perfil "Conservador", a sugestão deve ser a alocação de 100% da sobra em Renda Fixa (ex: Tesouro Selic / CDB).
+- [ ] CA-03: A saída no terminal deve exibir os valores recomendados em Reais (R$), mostrando a divisão exata baseada na sobra do usuário.
 
-**Prioridade:** | **Sprint prevista:**
+**Prioridade:** Alta | **Sprint prevista:** Sprint 3
 
 ---
 
-### HU-04 — [Título da História]
+### HU-04 — Geração de Relatório Financeiro
 
-**Como** [tipo de usuário],
-**Quero** [ação ou funcionalidade],
-**Para** [objetivo ou benefício].
+**Como** um usuário que concluiu a análise,
+**Quero** que o sistema consolide todas as informações em um relatório,
+**Para** que eu tenha um registro claro do meu plano de ação financeiro.
 
-**Regras de negócio relacionadas:** RN-XX
+**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
 
 **Critérios de Aceite:**
-- [ ] CA-01:
-- [ ] CA-02:
-- [ ] CA-03:
+- [ ] CA-01: O sistema deve gerar um resumo contendo: Renda, Gastos, Sobra, Perfil de Risco e a Estratégia de Alocação recomendada.
+- [ ] CA-02: O sistema deve oferecer a opção de salvar esse relatório em um arquivo de texto estruturado (ex: `.txt` ou `.csv`) no diretório local.
 
-**Prioridade:** | **Sprint prevista:**
+**Prioridade:** Média | **Sprint prevista:** Sprint 3
 
 ---
 
-### HU-05 — [Título da História]
+### HU-05 — Tratamento de Entradas Inválidas no Terminal
 
-**Como** [tipo de usuário],
-**Quero** [ação ou funcionalidade],
-**Para** [objetivo ou benefício].
+**Como** um usuário interagindo com uma interface de texto,
+**Quero** ser alertado caso eu digite um formato de dado incorreto,
+**Para** que o sistema não trave inesperadamente (crash) e eu possa corrigir a informação.
 
-**Regras de negócio relacionadas:** RN-XX
-
-**Critérios de Aceite:**
-- [ ] CA-01:
-- [ ] CA-02:
-- [ ] CA-03:
-
-**Prioridade:** | **Sprint prevista:**
-
----
-
-### HU-06 — [Título da História] _(opcional)_
-
-**Como** [tipo de usuário],
-**Quero** [ação ou funcionalidade],
-**Para** [objetivo ou benefício].
-
-**Regras de negócio relacionadas:** RN-XX
+**Regras de negócio relacionadas:** N/A (Requisito Não-Funcional / Engenharia)
 
 **Critérios de Aceite:**
-- [ ] CA-01:
-- [ ] CA-02:
-- [ ] CA-03:
+- [ ] CA-01: Se o sistema pedir um número (ex: Renda) e o usuário digitar letras ou símbolos, o sistema deve exibir a mensagem de erro "Entrada inválida. Por favor, digite apenas números."
+- [ ] CA-02: Após o erro, o sistema deve repetir a pergunta original sem encerrar a execução do programa.
 
-**Prioridade:** | **Sprint prevista:**
+**Prioridade:** Alta | **Sprint prevista:** Sprint 4
 
 ---
 
 ### 2.1 Backlog Priorizado
 
-<!-- Após escrever todas as HUs, liste-as aqui em ordem de prioridade de implementação. -->
-
 | # | História | Prioridade | Sprint |
 |---|---|---|---|
-| HU-01 |  |  |  |
-| HU-02 |  |  |  |
-| HU-03 |  |  |  |
-| HU-04 |  |  |  |
-| HU-05 |  |  |  |
-| HU-06 |  |  |  |
+| HU-01 | Otimização Orçamentária e Cálculo de Sobra | Alta | Sprint 3 |
+| HU-02 | Definição do Perfil de Risco | Alta | Sprint 3 |
+| HU-03 | Recomendação de Alocação de Recursos | Alta | Sprint 3 |
+| HU-05 | Tratamento de Entradas Inválidas no Terminal | Alta | Sprint 4 |
+| HU-04 | Geração de Relatório Financeiro | Média | Sprint 3 |
 
 ---
 
