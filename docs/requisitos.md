@@ -8,40 +8,57 @@
 ---
 
 ## 1. Síntese da Elicitação
-
-> _Responsável: **Elder**_
+**Responsável:** Elder
 
 ### 1.1 Técnicas de Elicitação Utilizadas
 
-<!-- Descreva quais técnicas foram usadas para levantar os requisitos.
-     Ex: análise de similares, pesquisa de mercado, questionário informal, etc. -->
+- Pesquisa de Similares (análise de 6 sistemas no mercado)
+- Análise de Documentos Técnicos (ANBIMA, CVM)
+- Consulta a Comunidades (Reddit r/investimentos)
+- Análise de Padrões de Domínio (regras de educação financeira)
+
+---
 
 ### 1.2 Análise de Similares
 
-<!-- Liste os sistemas similares analisados (ex: GuiaBolso, Mobills, planilhas do Me Poupe).
-     Para cada um, descreva brevemente o que foi observado e o que o InvestPlan faz diferente ou melhor. -->
-
 | Sistema Analisado | O que faz | Limitação identificada | O que o InvestPlan resolve |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Nubank App | Rastreia gastos por categoria, relatórios mensais | Não oferece recomendação de investimento | Integra controle de gastos + alocação de investimentos |
+| GuiaBolso | Agregador de contas + análise de orçamento | Recomendações genéricas sem personalização | Alocação personalizada por perfil de risco |
+| Calculadoras Online | Simulam crescimento com taxa fixa | Não calculam capacidade de poupança | Integra orçamento → poupança → simulação em um fluxo |
+| Apps de Renda Fixa | Interface para compra de títulos | Não ajudam a estruturar orçamento | Recomenda tipo de ativo (Tesouro vs CDB vs ETF) |
+| Planilhas Excel/Sheets | Controle manual com fórmulas | Requer conhecimento técnico; manual | Automatiza em Python; saída consistente |
+| Micro-Investimento | Aportes automáticos pequenos | Não diagnosticam orçamento | Diagnóstico completo antes de investir |
+
+---
 
 ### 1.3 Regras de Negócio Identificadas
 
-<!-- Liste as regras de negócio que o sistema deve seguir.
-     Ex: cálculo de reserva de emergência, critérios de perfil de risco, regras de alocação por perfil, etc.
-     Numere cada regra para facilitar o rastreamento nas HUs. -->
+**RN-01:** A renda mensal bruta deve ser >= R$ 1.000,00 e <= R$ 1.000.000,00. Se abaixo do mínimo, o sistema exibe aviso.
 
-- **RN-01:**
-- **RN-02:**
-- **RN-03:**
-- **RN-04:**
-- **RN-05:**
+**RN-02:** Os gastos devem ser categorizados em 8 categorias obrigatórias: Moradia, Alimentação, Transporte, Saúde, Educação, Lazer e Cultura, Contas Fixas e Outros.
+
+**RN-03:** A soma total de gastos não pode exceder a renda líquida. Se exceder, o sistema alerta e solicita revisão.
+
+**RN-04:** Renda Líquida = Renda Bruta - Desconto Tributário. CLT: 11,5% | PJ/Autônomo: 20%.
+
+**RN-05:** Poupança Mensal = Renda Líquida - Soma de Gastos. Se <= 0, o sistema marca "Déficit Orçamentário" e bloqueia investimentos.
+
+---
 
 ### 1.4 Fontes Consultadas na Elicitação
 
-<!-- Liste as fontes (já presentes no README ou novas) que embasaram as regras de negócio acima. -->
+1. **ANBIMA - Raio X do Investidor Brasileiro (9ª Edição)**
+   - 31% da população não possui reserva financeira
+   - 73% dos novos investidores buscam informação em influenciadores digitais
+
+2. **CVM - Perfil e Comportamento dos Investidores 2024**
+   - Crescimento de 42% no interesse por educação financeira
+   - Objetivo principal: formação de reserva de emergência e aposentadoria
+
+3. **Comunidade r/investimentos (Reddit)**
+   - "Paralisia por análise" é barreira central para iniciantes
+   - Usuários buscam "regras matemáticas" e "calculadoras estruturadas"
 
 ---
 
