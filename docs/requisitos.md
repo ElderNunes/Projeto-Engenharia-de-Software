@@ -190,7 +190,6 @@
 
 | ID | HUs em conflito | Descrição do conflito | Resolução adotada |
 |---|---|---|---|
-
 | CONF-01 | HU-03 vs Lógica de Alocação | A HU-03 (CA-02) prevê uma saída simplificada no terminal exibindo apenas o valor global de 100% em Renda Fixa. No entanto, o plano do algoritmo de negócios prevê uma granularidade maior, subdividindo esse montante em Renda Fixa Curta e Longa. Embora ambos sejam Renda Fixa, há uma divergência no nível de detalhamento da exibição. | Foi definido que o critério de aceite CA-02 da HU-03 será refinado para que a interface de texto detalhe as subcategorias de prazo em Reais (R$), garantindo que a exibição no terminal reflita fielmente o algoritmo matemático completo de alocação de carteira. |
 
 | CONF-02 | HU-01 vs RN-05 | A HU-01 (CA-01) estipula que o sistema deve solicitar diretamente a renda líquida. Contudo, a RN-04 determina que o usuário insere a renda bruta e o sistema calcula a líquida com base nos descontos fiscais. Além disso, a HU-01 (CA-04) bloqueia o avanço se a sobra for <= 0$, enquanto a RN-05 apenas classifica como "Déficit Orçamentário". | Ficou adotado o fluxo do protótipo (Seção 3.4): a CLI solicitará a renda bruta (conforme RN-04) e aplicará o cálculo automático. O bloqueio total de avanço só ocorrerá se a sobra final calculada for >= 0$ (em estrito cumprimento da RN-05). Se a sobra for positiva, mas abaixo de 10% da renda líquida, o sistema emitirá um alerta preventivo de baixa poupança, mas permitirá prosseguir.|
