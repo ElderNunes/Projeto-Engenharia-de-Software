@@ -157,51 +157,113 @@
 
 ### 3.1 Ambiguidades Encontradas
 
-<!-- Liste termos ou situações nas HUs que podem ser interpretados de mais de uma forma.
-     Para cada ambiguidade, registre como a equipe decidiu resolvê-la. -->
-
 | ID | HU(s) afetada(s) | Descrição da ambiguidade | Resolução adotada |
+
 |---|---|---|---|
-| AMB-01 |  |  |  |
-| AMB-02 |  |  |  |
-| AMB-03 |  |  |  |
+
+| AMB-01 |HU-01|O termo "Gastos Básicos/Estimados" na descrição da HU não deixa claro se o usuário digita um valor único consolidado ou se deve detalhar por categorias.|Ficou definido que a interface CLI solicitará obrigatoriamente os gastos divididos nas 8 categorias descritas na RN-02, realizando a soma de forma automática para o cálculo da sobra.|
+
+| AMB-02 |HU-02|O critério de aceite CA-02 fala em "opções que indicam aversão total à perda". Quais opções ou pesos exatos no questionário definem isso?|O questionário terá 5 perguntas com pontuações de 1 a 3. Se a pergunta específica de tolerância a quedas receber a resposta de peso mínimo (aversão total), o perfil será forçado para Conservador, independente da soma das outras respostas.|
+
+| AMB-03 |HU-04|O CA-02 menciona "salvar em arquivo de texto estruturado (ex: .txt ou .csv)", deixando o formato definitivo em aberto.|Para manter o alinhamento com a RN-18 (Persistência) e com o escopo do projeto, o sistema exportará um arquivo legível .txt para o usuário e salvará o estado interno em um arquivo estruturado .json.|
 
 ### 3.2 Conflitos Identificados
 
-<!-- Liste situações em que duas ou mais HUs se contradizem ou criam inconsistências entre si.
-     Registre como o conflito foi ou será resolvido. -->
-
 | ID | HUs em conflito | Descrição do conflito | Resolução adotada |
+
 |---|---|---|---|
-| CONF-01 |  |  |  |
-| CONF-02 |  |  |  |
+
+| CONF-01 |HU-01 vs RN-01|A HU-01 (CA-04) diz que se a sobra for menor ou igual a zero o sistema bloqueia o avanço. Contudo, a RN-06 diz que o sistema exige no mínimo 10% de capacidade de poupança para recomendar investimentos.|O bloqueio total e aviso de "Déficit Orçamentário" ocorrerá se a sobra for $\le 0$. Se a sobra for positiva, mas menor que 10% da renda líquida, o sistema emitirá o alerta reflexivo da RN-06, mas permitirá que o usuário prossiga se ele assim desejar.|
+
+| CONF-02 |HU-03 vs RN-10|A HU-03 (CA-02) prevê uma saída simplificada no terminal calculando e exibindo apenas o valor global de 100% em Renda Fixa. No entanto, a RN-10 exige uma granularidade maior, subdividindo esse montante em Renda Fixa Curta (70%) e Longa (30%). Embora ambos sejam Renda Fixa, há uma divergência no nível de detalhamento do cálculo e da exibição.|Foi definido que a RN-10 orientará a implementação do Módulo de Recomendação. O critério de aceite CA-02 da HU-03 será refinado para que a interface de texto detalhe as subcategorias de prazo em Reais (R$), garantindo que o comportamento do código reflita fielmente o algoritmo matemático completo da regra de negócio.|
 
 ### 3.3 Questões em Aberto
 
-<!-- Liste dúvidas que ainda não foram resolvidas e que podem impactar o desenvolvimento.
-     Registre o responsável por resolver cada uma e o prazo. -->
-
 | ID | Descrição da questão | Impacto | Responsável | Prazo |
+
 |---|---|---|---|---|
-| QA-01 |  |  |  |  |
-| QA-02 |  |  |  |  |
-| QA-03 |  |  |  |  |
+
+| QA-01 |Como o sistema deve se comportar caso o arquivo de persistência local (dados_usuario.json) esteja corrompido ou com formato inválido na inicialização?|Pode causar um crash no sistema logo na inicialização, violando o princípio de robustez do terminal.|Guilherme|02/06 (Sprint 2)|
+
+| QA-02 |As taxas de retorno assumidas na RN-14 (10%, 12% e 9% a.a.) serão estáticas no código (hardcoded) ou carregadas de um arquivo de configuração parametrizável?|Impacta a facilidade de manutenção e refatoração do código na Sprint 4.|Elder|09/06 (Sprint 3)|
+
+| QA-03 |Se o usuário cadastrar múltiplos objetivos (RN-12) cujas somas das metas ultrapassem drasticamente a projeção de patrimônio máximo, o sistema deve sugerir o reajuste de todos ou priorizar apenas o Objetivo 1?|Afeta a lógica algorítmica do Módulo de Recomendação/Relatório.|Felipe|09/06 (Sprint 3)|
 
 ### 3.4 Protótipo de Fluxo no Terminal
 
-<!-- Descreva ou ilustre (em texto/ASCII) como seria a interação do usuário com o sistema no terminal.
-     Isso ajuda a validar se as HUs fazem sentido na prática. -->
+======================================================================
+                     INVESTPLAN - SIMULADOR FINANCEIRO                
+======================================================================
 
-```
-Exemplo de estrutura (substituir pelo fluxo real):
+[1] Identificação do Regime de Trabalho:
+Selecione seu regime:
+(1) CLT (Desconto estimado de 11.5%)
+(2) PJ / Autônomo (Desconto estimado de 20.0%)
+Escolha: 1
 
-=== InvestPlan ===
-[1] Cadastrar renda e gastos
-[2] Ver diagnóstico financeiro
-[3] Definir perfil de risco
-[4] Ver recomendações de alocação
-[5] Gerar relatório
-[0] Sair
+[2] Coleta de Dados Financeiros:
+Digite sua renda mensal bruta (R$): 5000.00
+--- Carga tributária aplicada. Renda Líquida estimada: R$ 4425.00 ---
 
-Escolha uma opção: _
-```
+Informe seus gastos mensais por categoria:
+1. Moradia (Aluguel, IPTU, Condomínio): R$ 1200.00
+2. Alimentação (Supermercado, Restaurantes): R$ 600.00
+3. Transporte (Combustível, Transporte Público): R$ 300.00
+4. Saúde (Plano de Saúde, Farmácia): R$ 200.00
+5. Educação (Faculdade, Cursos): R$ 400.00
+6. Lazer e Cultura (Streaming, Viagens): R$ 300.00
+7. Contas Fixas (Água, Luz, Internet): R$ 250.00
+8. Outros Gastos: R$ 150.00
+
+======================================================================
+                        DIAGNÓSTICO FINANCEIRO                        
+======================================================================
+Soma Total de Gastos: R$ 3400.00
+Sobra Mensal Disponível (Poupança Real): R$ 1025.00
+Taxa de Poupança: 23.16% da renda líquida.
+
+[ALERTA] Gasto com Moradia compromete 27.12% da renda líquida (Limite: 30%).
+[OK] Gasto com Essenciais compromete 53.11% da renda líquida (Limite: 60%).
+[OK] Capacidade de poupança adequada para iniciar investimentos (> 10%).
+
+Deseja responder ao questionário de Perfil de Risco? (S/N): S
+
+======================================================================
+                         QUESTIONÁRIO DE PERFIL                       
+======================================================================
+Pergunta 1: Se seu investimento caísse 20% em um mês, o que você faria?
+(1) Venderia imediatamente para evitar mais perdas.
+(2) Manteria o investimento aguardando a recuperação.
+(3) Compraria mais unidades aproveitando o preço baixo.
+Escolha: 1
+
+[... demais perguntas ...]
+
+Seu Perfil de Investidor é: CONSERVADOR
+
+======================================================================
+                       ESTRATÉGIA DE ALOCAÇÃO                         
+======================================================================
+Com base na sua sobra de R$ 1025.00 e perfil CONSERVADOR, aloque:
+
+- Renda Fixa Curta (70%): R$ 717.50 / mês
+  -> Sugestão: Tesouro SELIC ou CDB 100% CDI com liquidez diária.
+  
+- Renda Fixa Longo Prazo (30%): R$ 307.50 / mês
+  -> Sugestão: Tesouro IPCA+ ou CDB Pós-fixado.
+
+- Ativos de Risco / Ações (0%): R$ 0.00 / mês
+
+======================================================================
+                  PROJEÇÃO DE PATRIMÔNIO (CENÁRIO BASE)               
+======================================================================
+Mantendo o aporte constante de R$ 1025.00/mês:
+- Em 1 ano:  R$ 12.981,25
+- Em 5 anos: R$ 81.110,43
+- Em 10 anos: R$ 221.750,18
+
+Deseja exportar o relatório detalhado (.txt)? (S/N): S
+[Sucesso] Relatório salvo como 'plano_investplan.txt' no diretório local.
+
+Obrigado por utilizar o InvestPlan! Finalizando o sistema...
+======================================================================
