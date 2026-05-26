@@ -44,6 +44,12 @@
 
 **RN-05:** Poupança Mensal = Renda Líquida - Soma de Gastos. Se <= 0, o sistema marca "Déficit Orçamentário" e bloqueia investimentos.
 
+**RN-06:** O questionário de perfil terá peso por resposta. Pontuação baixa define perfil Conservador, média Moderado e alta Arrojado. Se o usuário informar necessidade de resgate em menos de 1 ano, o perfil é forçado para Conservador, anulando a pontuação.
+
+**RN-07:** A alocação da poupança seguirá proporções fixas baseadas no perfil do usuário. Para o perfil Conservador: 100% em Renda Fixa (sendo 70% Curto Prazo e 30% Longo Prazo).
+
+**RN-08:** O cálculo de projeção de patrimônio utilizará a fórmula de juros compostos com aportes mensais constantes, assumindo uma taxa de retorno anual simulada atrelada ao perfil de risco.
+
 ---
 
 ### 1.4 Fontes Consultadas na Elicitação
@@ -78,7 +84,7 @@
 **Quero** inserir minha renda mensal e despesas básicas no terminal,
 **Para** descobrir minha capacidade real de poupança mensal.
 
-**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
+**Regras de negócio relacionadas:** RN-01, RN-02, RN-03, RN-04, RN-05
 
 **Critérios de Aceite:**
 - [ ] CA-01: O sistema deve solicitar a entrada do valor da renda mensal líquida.
@@ -96,7 +102,7 @@
 **Quero** responder a um questionário rápido sobre prazos e tolerância a perdas,
 **Para** que o sistema identifique adequadamente o meu perfil de investidor.
 
-**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
+**Regras de negócio relacionadas:** RN-06
 
 **Critérios de Aceite:**
 - [ ] CA-01: O sistema deve exibir perguntas de múltipla escolha diretamente no terminal.
@@ -113,11 +119,11 @@
 **Quero** receber uma sugestão detalhada de onde investir meu dinheiro,
 **Para** começar a investir com segurança de acordo com o meu perfil.
 
-**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
+**Regras de negócio relacionadas:** RN-07
 
 **Critérios de Aceite:**
 - [ ] CA-01: O sistema deve processar a "sobra mensal" (HU-01) e o perfil (HU-02) para injetar na estratégia correta de cálculo.
-- [ ] CA-02: Para o perfil "Conservador", a sugestão deve ser a alocação de 100% da sobra em Renda Fixa (ex: Tesouro Selic / CDB).
+- [ ] CA-02: Para o perfil Conservador, a sobra deve ser dividida em Renda Fixa Curta (70%) e Renda Fixa Longo Prazo (30%), exibindo os valores em R$ no terminal.
 - [ ] CA-03: A saída no terminal deve exibir os valores recomendados em Reais (R$), mostrando a divisão exata baseada na sobra do usuário.
 
 **Prioridade:** Alta | **Sprint prevista:** Sprint 3
@@ -130,10 +136,10 @@
 **Quero** que o sistema consolide todas as informações em um relatório,
 **Para** que eu tenha um registro claro do meu plano de ação financeiro.
 
-**Regras de negócio relacionadas:** RN-XX (Aguardando Elicitação)
+**Regras de negócio relacionadas:** RN-08
 
 **Critérios de Aceite:**
-- [ ] CA-01: O sistema deve gerar um resumo contendo: Renda, Gastos, Sobra, Perfil de Risco e a Estratégia de Alocação recomendada.
+- [ ] CA-01: O sistema deve gerar um resumo contendo: Renda, Gastos, Sobra, Perfil de Risco e a Estratégia de Alocação recomendada, além da projeção de patrimônio.
 - [ ] CA-02: O sistema deve oferecer a opção de salvar esse relatório em um arquivo de texto estruturado (ex: `.txt` ou `.csv`) no diretório local.
 
 **Prioridade:** Média | **Sprint prevista:** Sprint 3
@@ -175,39 +181,29 @@
 ### 3.1 Ambiguidades Encontradas
 
 | ID | HU(s) afetada(s) | Descrição da ambiguidade | Resolução adotada |
-
 |---|---|---|---|
-
 | AMB-01 | HU-01 | O termo "Gastos Básicos/Estimados" na descrição da HU não deixa claro se o usuário digita um valor único consolidado ou se deve detalhar por categorias. | Ficou definido que a interface CLI solicitará obrigatoriamente os gastos divididos nas 8 categorias descritas na RN-02, realizando a soma de forma automática para o cálculo da sobra. |
-
 | AMB-02 | HU-02 | O critério de aceite CA-02 fala em "opções que indicam aversão total à perda". Quais opções ou pesos exatos no questionário definem isso de forma matemática? | O questionário terá 5 perguntas com pontuações de 1 a 3. Se a pergunta específica de tolerância a quedas receber a resposta de peso mínimo (aversão total), o perfil será forçado para Conservador, independente da soma das outras respostas. |
-
 | AMB-03 | HU-04 | O CA-02 menciona "salvar em arquivo de texto estruturado (ex: `.txt` ou `.csv`)", deixando o formato definitivo em aberto. | Para manter o alinhamento com os requisitos de persistência e escopo do projeto, o sistema exportará um arquivo legível `.txt` para o usuário e salvará o estado interno em um arquivo estruturado `.json`. |
 
 ### 3.2 Conflitos Identificados
 
 | ID | HUs em conflito | Descrição do conflito | Resolução adotada |
-
 |---|---|---|---|
-
 | CONF-01 | HU-03 vs Lógica de Alocação | A HU-03 (CA-02) prevê uma saída simplificada no terminal exibindo apenas o valor global de 100% em Renda Fixa. No entanto, o plano do algoritmo de negócios prevê uma granularidade maior, subdividindo esse montante em Renda Fixa Curta (70%) e Longa (30%). Embora ambos sejam Renda Fixa, há uma divergência no nível de detalhamento da exibição. | Foi definido que o critério de aceite CA-02 da HU-03 será refinado para que a interface de texto detalhe as subcategorias de prazo em Reais (R$), garantindo que a exibição no terminal reflita fielmente o algoritmo matemático completo de alocação de carteira. |
-
-| CONF-02 | HU-01 vs RN-05 | A HU-01 (CA-04) diz que se a sobra for menor ou igual a zero o sistema bloqueia o avanço. Contudo, a RN-05 marca apenas como "Déficit Orçamentário". Além disso, o fluxo planejado prevê um alerta preventivo caso a poupança seja menor que 10% da renda líquida. | O bloqueio total e aviso de "Orçamento Estourado" ocorrerá se a sobra for $\le 0$, em estrito cumprimento da RN-05. Se a sobra for positiva, mas menor que 10% da renda líquida (calculada via RN-04), o sistema emitirá um alerta de baixa capacidade de poupança, mas permitirá que o usuário prossiga se ele assim desejar. |
+| CONF-02 | HU-01 vs RN-05 | A HU-01 (CA-04) diz que se a sobra for menor ou igual a zero o sistema bloqueia o avanço. Contudo, a RN-05 marca apenas como "Déficit Orçamentário". Além disso, o fluxo planejado prevê um alerta preventivo caso a poupança seja menor que 10% da renda líquida. | O bloqueio total e aviso de "Orçamento Estourado" ocorrerá se a sobra for <= 0, em estrito cumprimento da RN-05. Se a sobra for positiva, mas menor que 10% da renda líquida (calculada via RN-04), o sistema emitirá um alerta de baixa capacidade de poupança, mas permitirá que o usuário prossiga se ele assim desejar. |
 
 ### 3.3 Questões em Aberto
 
 | ID | Descrição da questão | Impacto | Responsável | Prazo |
-
 |---|---|---|---|---|
-
 | QA-01 | Como o sistema deve se comportar caso o arquivo de persistência local (`dados_usuario.json`) esteja corrompido ou com formato inválido na inicialização? | Pode causar um *crash* no sistema logo na inicialização, violando o princípio de robustez do terminal. | Guilherme | 02/06 (Sprint 2) |
-
 | QA-02 | As taxas de retorno assumidas para as projeções de patrimônio (ex: 10% a.a. para Renda Fixa) serão estáticas no código (hardcoded) ou carregadas de um arquivo de configuração parametrizável? | Impacta a facilidade de manutenção e escrita de testes automatizados na Sprint 4. | Elder | 09/06 (Sprint 3) |
-
 | QA-03 | Caso o usuário cadastre múltiplos objetivos de investimento cujas metas financeiras somadas ultrapassem drasticamente a projeção de sua capacidade real de poupança, o sistema deve sugerir o reajuste de todos ou priorizar por ordem de cadastro? | Afeta a lógica algorítmica do Módulo de Recomendação/Relatório (HU-04). | Felipe | 09/06 (Sprint 3) |
 
 ### 3.4 Protótipo de Fluxo no Terminal
 
+```text
 ======================================================================
                      INVESTPLAN - SIMULADOR FINANCEIRO                
 ======================================================================
