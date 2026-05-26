@@ -178,11 +178,11 @@
 
 |---|---|---|---|
 
-| AMB-01 |HU-01|O termo "Gastos Básicos/Estimados" na descrição da HU não deixa claro se o usuário digita um valor único consolidado ou se deve detalhar por categorias.|Ficou definido que a interface CLI solicitará obrigatoriamente os gastos divididos nas 8 categorias descritas na RN-02, realizando a soma de forma automática para o cálculo da sobra.|
+| AMB-01 | HU-01 | O termo "Gastos Básicos/Estimados" na descrição da HU não deixa claro se o usuário digita um valor único consolidado ou se deve detalhar por categorias. | Ficou definido que a interface CLI solicitará obrigatoriamente os gastos divididos nas 8 categorias descritas na RN-02, realizando a soma de forma automática para o cálculo da sobra. |
 
-| AMB-02 |HU-02|O critério de aceite CA-02 fala em "opções que indicam aversão total à perda". Quais opções ou pesos exatos no questionário definem isso?|O questionário terá 5 perguntas com pontuações de 1 a 3. Se a pergunta específica de tolerância a quedas receber a resposta de peso mínimo (aversão total), o perfil será forçado para Conservador, independente da soma das outras respostas.|
+| AMB-02 | HU-02 | O critério de aceite CA-02 fala em "opções que indicam aversão total à perda". Quais opções ou pesos exatos no questionário definem isso de forma matemática? | O questionário terá 5 perguntas com pontuações de 1 a 3. Se a pergunta específica de tolerância a quedas receber a resposta de peso mínimo (aversão total), o perfil será forçado para Conservador, independente da soma das outras respostas. |
 
-| AMB-03 |HU-04|O CA-02 menciona "salvar em arquivo de texto estruturado (ex: .txt ou .csv)", deixando o formato definitivo em aberto.|Para manter o alinhamento com a RN-18 (Persistência) e com o escopo do projeto, o sistema exportará um arquivo legível .txt para o usuário e salvará o estado interno em um arquivo estruturado .json.|
+| AMB-03 | HU-04 | O CA-02 menciona "salvar em arquivo de texto estruturado (ex: `.txt` ou `.csv`)", deixando o formato definitivo em aberto. | Para manter o alinhamento com os requisitos de persistência e escopo do projeto, o sistema exportará um arquivo legível `.txt` para o usuário e salvará o estado interno em um arquivo estruturado `.json`. |
 
 ### 3.2 Conflitos Identificados
 
@@ -190,9 +190,9 @@
 
 |---|---|---|---|
 
-| CONF-01 |HU-01 vs RN-01|A HU-01 (CA-04) diz que se a sobra for menor ou igual a zero o sistema bloqueia o avanço. Contudo, a RN-06 diz que o sistema exige no mínimo 10% de capacidade de poupança para recomendar investimentos.|O bloqueio total e aviso de "Déficit Orçamentário" ocorrerá se a sobra for $\le 0$. Se a sobra for positiva, mas menor que 10% da renda líquida, o sistema emitirá o alerta reflexivo da RN-06, mas permitirá que o usuário prossiga se ele assim desejar.|
+| CONF-01 | HU-03 vs Lógica de Alocação | A HU-03 (CA-02) prevê uma saída simplificada no terminal exibindo apenas o valor global de 100% em Renda Fixa. No entanto, o plano do algoritmo de negócios prevê uma granularidade maior, subdividindo esse montante em Renda Fixa Curta (70%) e Longa (30%). Embora ambos sejam Renda Fixa, há uma divergência no nível de detalhamento da exibição. | Foi definido que o critério de aceite CA-02 da HU-03 será refinado para que a interface de texto detalhe as subcategorias de prazo em Reais (R$), garantindo que a exibição no terminal reflita fielmente o algoritmo matemático completo de alocação de carteira. |
 
-| CONF-02 |HU-03 vs RN-10|A HU-03 (CA-02) prevê uma saída simplificada no terminal calculando e exibindo apenas o valor global de 100% em Renda Fixa. No entanto, a RN-10 exige uma granularidade maior, subdividindo esse montante em Renda Fixa Curta (70%) e Longa (30%). Embora ambos sejam Renda Fixa, há uma divergência no nível de detalhamento do cálculo e da exibição.|Foi definido que a RN-10 orientará a implementação do Módulo de Recomendação. O critério de aceite CA-02 da HU-03 será refinado para que a interface de texto detalhe as subcategorias de prazo em Reais (R$), garantindo que o comportamento do código reflita fielmente o algoritmo matemático completo da regra de negócio.|
+| CONF-02 | HU-01 vs RN-05 | A HU-01 (CA-04) diz que se a sobra for menor ou igual a zero o sistema bloqueia o avanço. Contudo, a RN-05 marca apenas como "Déficit Orçamentário". Além disso, o fluxo planejado prevê um alerta preventivo caso a poupança seja menor que 10% da renda líquida. | O bloqueio total e aviso de "Orçamento Estourado" ocorrerá se a sobra for $\le 0$, em estrito cumprimento da RN-05. Se a sobra for positiva, mas menor que 10% da renda líquida (calculada via RN-04), o sistema emitirá um alerta de baixa capacidade de poupança, mas permitirá que o usuário prossiga se ele assim desejar. |
 
 ### 3.3 Questões em Aberto
 
@@ -200,11 +200,11 @@
 
 |---|---|---|---|---|
 
-| QA-01 |Como o sistema deve se comportar caso o arquivo de persistência local (dados_usuario.json) esteja corrompido ou com formato inválido na inicialização?|Pode causar um crash no sistema logo na inicialização, violando o princípio de robustez do terminal.|Guilherme|02/06 (Sprint 2)|
+| QA-01 | Como o sistema deve se comportar caso o arquivo de persistência local (`dados_usuario.json`) esteja corrompido ou com formato inválido na inicialização? | Pode causar um *crash* no sistema logo na inicialização, violando o princípio de robustez do terminal. | Guilherme | 02/06 (Sprint 2) |
 
-| QA-02 |As taxas de retorno assumidas na RN-14 (10%, 12% e 9% a.a.) serão estáticas no código (hardcoded) ou carregadas de um arquivo de configuração parametrizável?|Impacta a facilidade de manutenção e refatoração do código na Sprint 4.|Elder|09/06 (Sprint 3)|
+| QA-02 | As taxas de retorno assumidas para as projeções de patrimônio (ex: 10% a.a. para Renda Fixa) serão estáticas no código (hardcoded) ou carregadas de um arquivo de configuração parametrizável? | Impacta a facilidade de manutenção e escrita de testes automatizados na Sprint 4. | Elder | 09/06 (Sprint 3) |
 
-| QA-03 |Se o usuário cadastrar múltiplos objetivos (RN-12) cujas somas das metas ultrapassem drasticamente a projeção de patrimônio máximo, o sistema deve sugerir o reajuste de todos ou priorizar apenas o Objetivo 1?|Afeta a lógica algorítmica do Módulo de Recomendação/Relatório.|Felipe|09/06 (Sprint 3)|
+| QA-03 | Caso o usuário cadastre múltiplos objetivos de investimento cujas metas financeiras somadas ultrapassem drasticamente a projeção de sua capacidade real de poupança, o sistema deve sugerir o reajuste de todos ou priorizar por ordem de cadastro? | Afeta a lógica algorítmica do Módulo de Recomendação/Relatório (HU-04). | Felipe | 09/06 (Sprint 3) |
 
 ### 3.4 Protótipo de Fluxo no Terminal
 
