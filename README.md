@@ -69,17 +69,31 @@ O conjunto de funcionalidades proposto foi intencionalmente delimitado para cabe
 - Felipe dos Santos Rodrigues
 - Guilherme Giuliangeli Monteiro
 
-Para garantir a participação integral e o desenvolvimento de todas as competências de engenharia por todos os membros, a equipe adotou uma dinâmica de **Liderança Rotativa por Sprint**. Todos os integrantes participarão ativamente da codificação, documentação e testes em todas as fases do projeto, com a seguinte divisão de responsabilidade pelas entregas críticas:
+Para garantir a participação integral e o desenvolvimento de todas as competências de engenharia por todos os membros, a equipe adotou uma dinâmica de **Liderança Rotativa e Fatiamento Vertical**. Todos os integrantes participarão ativamente da codificação, documentação e desenho arquitetural em todas as fases do projeto.
 
 **Sprint 1: Engenharia de Requisitos (22/05 a 26/05)**
 - Felipe: Responsável por liderar a redação e estruturação das Histórias de Usuário e Critérios de Aceite.
 - Elder: Responsável por liderar a Elicitação (pesquisa de mercado e regras de negócio de investimentos/orçamento).
 - Guilherme: Responsável por conduzir a Validação dos requisitos (identificação de ambiguidades e conflitos).
+*(Ajuste de escopo: revisão cruzada para garantir validação de todos os artefatos gerados em conjunto)*
 
 **Sprint 2: Projeto e Arquitetura (29/05 a 02/06)**
-- Felipe: Responsável pelo Diagrama de Arquitetura e justificativa de *trade-offs*.
-- Elder: Responsável por liderar a implementação do esqueleto funcional no Terminal (CLI).
-- Guilherme: Responsável pela documentação dos Padrões de Projeto e Padrões de Qualidade.
+Nesta sprint, o trabalho foi dividido em fatias verticais para atender ao requisito de participação integral em todos os tópicos exigidos:
+- **Felipe:**
+  - *Padrões de Qualidade:* Documentação das regras de *Clean Code*, estabelecendo a padronização de um código estritamente funcional (ausência de comentários e cabeçalhos descritivos nos arquivos Python, garantindo legibilidade exclusiva por nomes de variáveis e funções).
+  - *Arquitetura:* Desenho e justificativa de *trade-offs* da Camada de Lógica de Negócios (Core).
+  - *Padrões de Projeto:* Desenho UML e documentação do padrão **Strategy** (Módulo de Alocação).
+  - *Codificação Inicial:* Implementação do esqueleto estrutural do motor de investimentos na CLI.
+- **Elder:**
+  - *Padrões de Qualidade:* Documentação das regras de controle de versão (Git Flow simplificado e *commits* semânticos).
+  - *Arquitetura:* Desenho e justificativa de *trade-offs* da Camada de Interface (CLI).
+  - *Padrões de Projeto:* Desenho UML e documentação do padrão **Facade** (orquestração de menus e comunicação com a lógica).
+  - *Codificação Inicial:* Implementação do *loop* principal da interface do terminal e funções de captação de *inputs*.
+- **Guilherme:**
+  - *Padrões de Qualidade:* Documentação das diretrizes de tipagem (*Type Hinting*) e tratamento de erros.
+  - *Arquitetura:* Desenho e justificativa de *trade-offs* da Camada de Persistência Local (arquivos estruturados).
+  - *Padrões de Projeto:* Desenho UML e documentação do padrão **Singleton** (gerenciamento de estado e controle de acesso a arquivos locais).
+  - *Codificação Inicial:* Implementação dos esqueletos de persistência de dados e validação primária de entradas no terminal.
 
 **Sprint 3: Desenvolvimento Base (09/06 a 12/06)**
 - Todos os membros: Implementação balanceada das funcionalidades em Python. Cada membro assumirá o ciclo completo (lógica, testes e integração) de pelo menos um módulo do sistema (ex: Módulo de Gastos, Módulo de Alocação, Módulo de Relatório). Qualquer membro estará apto a explicar qualquer parte do código-fonte durante as revisões.
