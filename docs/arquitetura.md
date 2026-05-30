@@ -8,7 +8,7 @@ Para garantir o rastreamento das decisões e o alinhamento com os requisitos de 
 |---|---|---|---|
 | 30/05/2026 | Definição do Padrão Strategy para Alocação | Necessidade de evitar estruturas condicionais complexas e permitir fácil expansão de novos perfis no futuro. | Felipe |
 | 30/05/2026 | Isolamento da Lógica de Negócios (Core) | Separar a matemática financeira da interface do terminal (CLI) para viabilizar testes automatizados isolados na Sprint 4. | Felipe |
-| 30/05/2026 | Adoção de Clean Code estritamente funcional | Proibição de comentários em linha para forçar a equipe a usar nomes de variáveis autodescritivas. | Felipe |
+| 30/05/2026 | Adoção de Clean Code funcional | Proibição de comentários inline para forçar a equipe a usar nomes de variáveis autodescritivas. | Felipe |
 
 ---
 
@@ -17,10 +17,10 @@ Para garantir o rastreamento das decisões e o alinhamento com os requisitos de 
 > **Responsável:** Felipe (Clean Code), Elder (Controle de Versão), Guilherme (Tipagem e Tratamento de Erros)
 
 ### 2.1 Diretrizes de Clean Code e Nomenclatura (Felipe)
-O código base do InvestPlan deve ser estritamente funcional, limpo e autodocumentado. Para garantir o mais alto nível de legibilidade e manutenção, a equipe deve seguir rigorosamente as seguintes regras na escrita do código Python:
+O código base do InvestPlan deve focar na clareza estrutural e ser autodocumentado. Para garantir o mais alto nível de legibilidade e manutenção, a equipe deve seguir rigorosamente as seguintes regras na escrita do código Python:
 
-* **Proibição de Comentários em Linha:** O código não deve conter comentários explicativos em linha ou cabeçalhos descritivos no topo dos arquivos. Se um trecho de código precisa de um comentário para ser entendido, ele deve ser refatorado.
-* **Nomenclatura Autodescritiva:** A clareza do sistema dependerá inteiramente dos nomes escolhidos. Variáveis, funções e classes devem revelar exatamente sua intenção (ex: usar `calcular_capacidade_poupanca()` em vez de `calc_cp()`).
+* **Proibição de Comentários em Linha (Uso restrito a Docstrings):** O código não deve conter comentários explicativos em linha (`#`) para justificar lógicas complexas. Se um trecho de código precisa de um comentário em linha para ser entendido, ele deve ser refatorado. No entanto, o uso de *docstrings* (`"""`) é permitido e encorajado exclusivamente para documentar o propósito de classes, contratos de interfaces públicas e retornos de funções.
+* **Nomenclatura Autodescritiva:** A clareza do sistema dependerá da escolha dos nomes. Variáveis, funções e classes devem revelar exatamente sua intenção (ex: usar `calcular_capacidade_poupanca()` em vez de `calc_cp()`).
 * **Funções de Responsabilidade Única (SRP):** Cada função deve realizar apenas uma operação. Funções extensas devem ser quebradas em métodos menores.
 
 *(Espaço reservado para o Elder adicionar Git Flow e o Guilherme adicionar Type Hinting)*
