@@ -38,4 +38,6 @@ class ContextoAlocacao:
         self._estrategia = estrategia
 
     def executar_alocacao(self, sobra: float) -> Dict[str, float]:
+        if sobra <= 0:
+            raise ValueError("A sobra orçamentária deve ser maior que zero para permitir a alocação.")
         return self._estrategia.calcular_alocacao(sobra)
