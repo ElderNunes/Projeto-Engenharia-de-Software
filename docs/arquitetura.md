@@ -23,7 +23,20 @@ O código base do InvestPlan deve focar na clareza estrutural e ser autodocument
 * **Nomenclatura Autodescritiva:** A clareza do sistema dependerá da escolha dos nomes. Variáveis, funções e classes devem revelar exatamente sua intenção (ex: usar `calcular_capacidade_poupanca()` em vez de `calc_cp()`).
 * **Funções de Responsabilidade Única (SRP):** Cada função deve realizar apenas uma operação. Funções extensas devem ser quebradas em métodos menores.
 
-*(Espaço reservado para o Elder adicionar Git Flow e o Guilherme adicionar Type Hinting)*
+### 2.2 Diretrizes de Controle de Versão e Git Flow Simplificado (Elder)
+Para garantir a integridade do código e permitir o desenvolvimento paralelo sem conflitos destrutivos, a equipe adotará um modelo derivado do Git Flow, simplificado para a dinâmica do projeto:
+
+* **Estrutura de Branches:**
+  * `main`: Produção. Contém apenas código 100% estável e testado. Protegida contra commits diretos.
+  * `develop`: Integração. Branch de consolidação do trabalho da equipe onde ocorrem as preparações para entregas de sprint.
+  * `feature/*`: Desenvolvimento de funcionalidades (ex: `feature/calculo-orcamento`, `feature/interface-cli`). Criadas a partir de `develop` e mescladas via Pull Request (PR) após revisão por outro membro da equipe.
+* **Padronização de Commits (Commits Semânticos):** Mensagens de commit devem ser claras e usar prefixos normatizados para facilitar a leitura automática do histórico:
+  * `feat:` Quando uma nova funcionalidade é adicionada (ex: `feat: implementa loop principal da CLI`).
+  * `fix:` Quando uma correção de bug é realizada (ex: `fix: corrige validacao de input de renda`).
+  * `refactor:` Mudança no código que não altera comportamento (ex: `refactor: renomeia variaveis para clareza`).
+  * `docs:` Alterações exclusivas na documentação (ex: `docs: atualiza adr da arquitetura`).
+
+*(Espaço reservado para o Guilherme adicionar Type Hinting)*
 
 ---
 
@@ -42,7 +55,12 @@ Esta camada é o "motor" do InvestPlan, responsável por processar os cálculos 
 
 * **Trade-off Justificado:** Optamos por um isolamento total e rigoroso desta camada em relação à camada de interface (CLI). Nenhuma classe de negócios possui comandos de `print()` ou `input()`. O *trade-off* dessa decisão é um leve aumento na verbosidade estrutural, exigindo a passagem de objetos e retornos formatados entre os arquivos. No entanto, essa escolha é justificada porque permite que toda a matemática financeira seja testada de forma isolada através do módulo `unittest` na Sprint 4, garantindo a confiabilidade dos cálculos do sistema sem depender da interação do usuário.
 
-*(Espaço reservado para o Elder justificar a Interface CLI e o Guilherme justificar a Persistência Local)*
+### 3.2 Camada de Interface / CLI (Responsável: Elder)
+Esta camada é a porta de entrada da aplicação, encarregada unicamente de capturar as entradas textuais do usuário, exibir menus estruturados no terminal e renderizar os outputs de forma limpa e amigável.
+
+* **Trade-off Justificado:** A escolha por uma interface em Linha de Comando (CLI) textual foi tomada em detrimento de uma interface gráfica (GUI) ou Web para este estágio do projeto. O *trade-off* negativo é uma experiência de usuário (UX) mais árida e limitada visualmente. Contudo, o impacto positivo é massivo na velocidade de desenvolvimento, na portabilidade imediata (roda em qualquer terminal Python sem dependências de sistema operacional) e no custo de infraestrutura zero. Essa simplicidade na camada visual permitiu concentrar o esforço de engenharia na robustez dos algoritmos financeiros e na qualidade arquitetural do Core.
+
+*(Espaço reservado para o Guilherme justificar a Persistência Local)*
 
 ---
 
@@ -92,4 +110,40 @@ classDiagram
 * **`EstrategiaAlocacao`:** Interface abstrata que dita o contrato padrão para todos os algoritmos de cálculo. Garante que qualquer nova estratégia implemente o método de cálculo de forma consistente.
 * **Classes Concretas (`AlocacaoConservadora`, `AlocacaoModerada`, `AlocacaoArrojada`):** Contêm os coeficientes matemáticos específicos de cada perfil de risco (conforme a regra RN-07), processando o valor numérico da sobra orçamentária e devolvendo um dicionário estruturado com as quantias exatas destinadas a cada ativo.
 
-*(Espaço reservado para o Elder documentar o Facade e o Guilherme documentar o Singleton)*
+### 4.2 Padrão Facade: Orquestrador de Interface e Fluxo (Responsável: Elder)
+O padrão estrutural **Facade** (Fachada) foi adotado como o ponto central de controle da interface textual, atuando como um mediador unificado entre o loop do terminal e o ecossistema de lógica de negócios.
+
+* **Problema a ser resolvido:** A Camada de Interface precisa gerenciar múltiplos menus (Orçamento, Questionário de Risco, Simulação de Alocação) e disparar chamadas para diversas regras de negócio diferentes. Se a lógica da CLI fizesse chamadas diretas a todas as classes do Core, o código da interface ficaria altamente acoplado à implementação das classes de negócio. Qualquer mudança em um método financeiro exigiria alterar a tela do terminal.
+* **Solução e Classes Reais:** Criamos a classe `InvestPlanFacade`. Ela expõe métodos de alto nível para o loop do terminal (como `orquestrar_fluxo_orcamento()` ou `gerar_diagnostico_completo()`). Por trás dos panos, o Facade instancia as classes de negócio do Core, passa os parâmetros, consolida as respostas do motor econômico e devolve os dados mastigados para a CLI apenas exibir.
+* **Benefício Arquitetural:** Alto desacoplamento (Princípio de Segregação de Interfaces). A CLI conversa apenas com o Facade. Se no futuro o InvestPlan migrar de terminal (CLI) para a Web (FastAPI/Django), o Core e as telas não sofrerão impactos; bastará plugar a nova interface na mesma Fachada (`InvestPlanFacade`).
+
+### 4.2.1 Diagrama de Classes UML (Facade)
+
+```mermaid
+classDiagram
+    class MenuTerminal {
+        +iniciar_sistema() void
+        -exibir_menu_principal() void
+        -capturar_opcao() int
+    }
+    class InvestPlanFacade {
+        -_gerenciador_orcamento: GerenciadorOrcamento
+        -_avaliador_risco: AvaliadorRisco
+        -_contexto_alocacao: ContextoAlocacao
+        +processar_orcamento(dados: dict) dict
+        +avaliar_perfil(respostas: list) string
+        +calcular_investimentos(sobra: float, perfil: string) dict
+    }
+    class GerenciadorOrcamento {
+        +validar_renda(bruta: float) bool
+        +calcular_liquida(bruta: float, tipo: string) float
+    }
+    class AvaliadorRisco {
+        +computar_score(respostas: list) string
+    }
+
+    MenuTerminal --> InvestPlanFacade : usa_unicamente
+    InvestPlanFacade --> GerenciadorOrcamento : orquestra
+    InvestPlanFacade --> AvaliadorRisco : orquestra
+
+*(Espaço reservado para o Guilherme documentar o Singleton)*
