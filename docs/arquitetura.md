@@ -145,5 +145,6 @@ classDiagram
     MenuTerminal --> InvestPlanFacade : usa_unicamente
     InvestPlanFacade --> GerenciadorOrcamento : orquestra
     InvestPlanFacade --> AvaliadorRisco : orquestra
+```
 
 *(Espaço reservado para o Guilherme documentar o Singleton)*
