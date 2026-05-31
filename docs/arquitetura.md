@@ -9,6 +9,9 @@ Para garantir o rastreamento das decisões e o alinhamento com os requisitos de 
 | 30/05/2026 | Definição do Padrão Strategy para Alocação | Necessidade de evitar estruturas condicionais complexas e permitir fácil expansão de novos perfis no futuro. | Felipe |
 | 30/05/2026 | Isolamento da Lógica de Negócios (Core) | Separar a matemática financeira da interface do terminal (CLI) para viabilizar testes automatizados isolados na Sprint 4. | Felipe |
 | 30/05/2026 | Adoção de Clean Code funcional | Proibição de comentários inline para forçar a equipe a usar nomes de variáveis autodescritivas. | Felipe |
+| 31/05/2026 | Adopção do Git Flow Simplificado e Commits Semânticos | Garantir a integridade do código em desenvolvimento paralelo e padronizar o histórico de alterações para auditoria rápida. | Elder |
+| 31/05/2026 | Escolha de Interface via Linha de Comando (CLI) | Maximizar a velocidade de desenvolvimento e portabilidade a custo zero, aceitando o trade-off de uma experiência visual limitada (UX). | Elder |
+| 31/05/2026 | Implementação do Padrão Facade na Interface | Desacoplar a camada visual das regras de negócio, centralizando o fluxo e permitindo futuras trocas de interface sem impactar o Core. | Elder |
 
 ---
 
