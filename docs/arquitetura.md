@@ -39,8 +39,41 @@ Para garantir a integridade do código e permitir o desenvolvimento paralelo sem
   * `refactor:` Mudança no código que não altera comportamento (ex: `refactor: renomeia variaveis para clareza`).
   * `docs:` Alterações exclusivas na documentação (ex: `docs: atualiza adr da arquitetura`).
 
-*(Espaço reservado para o Guilherme adicionar Type Hinting)*
+### 2.3 Diretrizes de Type Hinting
+O uso de indicações de tipo (*Type Hinting*) é obrigatório em toda a base de código do InvestPlan, em conformidade com a PEP 484. A adoção desta prática visa mitigar erros em tempo de design, documentar nativamente as assinaturas do sistema e facilitar a análise estática por ferramentas de linting.
 
+* **Tipagem de Parâmetros e Retornos:** Todas as funções e métodos devem declarar explicitamente o tipo de seus argumentos e o tipo do valor de retorno, inclusive retornos nulos (`None`).
+* **Coleções Estruturadas:** Para dicionários, listas e tuplas, deve-se utilizar as definições do módulo `typing` para especificar o conteúdo das coleções.
+* **Flexibilidade Controlada:** O uso de `Union` ou `Optional` deve ser empregado quando um parâmetro ou retorno puder assumir múltiplos tipos ou valores nulos.
+
+Exemplos:
+```python
+
+from typing import Dict, List, Optional, Any
+
+def calcular_liquida(bruta: float, tipo_regime: str) -> float:
+    pass
+
+def extrair_dados_persistidos() -> Optional[Dict[str, Any]]:
+    pass
+```
+
+### 2.4 Política Global de Tratamento de Erros
+O sistema adota uma postura defensiva no manejo de exceções para garantir a resiliência da aplicação em ambiente de terminal (CLI), impedindo interrupções abruptas da execução causadas por falhas internas ou por entradas de dados inválidas.
+
+* **Proibição de Captura Genérica (*Bare Except*):** É vedada a utilização de blocos `except:` vazios ou desprovidos de classe de erro. Toda captura de exceção deve especificar a classe exata do erro esperado (ex: `ValueError`).
+* **Isolamento por Exceções de Negócio:** Falhas decorrentes de violações diretas de regras de negócio devem disparar exceções customizadas, herdadas de uma classe base unificada da aplicação.
+* **Ciclo de Recuperação na Interface:** Erros de digitação ou falhas de conversão cometidos pelo usuário devem ser tratados localmente por meio de loops de repetição na camada de terminal, interceptando o erro e impedindo a exibição de *tracebacks* do Python.
+
+```python
+class InvestPlanException(Exception):
+    """Classe base para todas as exceções de negócio do sistema."""
+    pass
+
+class OrcamentoEstouradoError(InvestPlanException):
+    """Sinaliza que as despesas superam a renda disponível."""
+    pass
+```
 ---
 
 ## 3. Diagrama de Arquitetura e Trade-offs
@@ -63,7 +96,10 @@ Esta camada é a porta de entrada da aplicação, encarregada unicamente de capt
 
 * **Trade-off Justificado:** A escolha por uma interface em Linha de Comando (CLI) textual foi tomada em detrimento de uma interface gráfica (GUI) ou Web para este estágio do projeto. O *trade-off* negativo é uma experiência de usuário (UX) mais árida e limitada visualmente. Contudo, o impacto positivo é massivo na velocidade de desenvolvimento, na portabilidade imediata (roda em qualquer terminal Python sem dependências de sistema operacional) e no custo de infraestrutura zero. Essa simplicidade na camada visual permitiu concentrar o esforço de engenharia na robustez dos algoritmos financeiros e na qualidade arquitetural do Core.
 
-*(Espaço reservado para o Guilherme justificar a Persistência Local)*
+### 3.3 Camada de Persistência Local (JSON)
+Esta camada é responsável por gerenciar o ciclo de vida dos dados do sistema, realizando a leitura e a escrita do estado da aplicação, dados orçamentários e perfis de risco em um arquivo estruturado local denominado `dados_usuario.json`.
+
+* **Trade-off Justificado:** A escolha por este modelo, em detrimento de um Sistema Gerenciador de Banco de Dados (SGBD) relacional tradicional, baseia-se nos requisitos de portabilidade e simplicidade do projeto, permitindo a execução imediata da aplicação em qualquer ambiente operacional com Python instalado, sem a necessidade de instalações ou gerenciamento de credenciais. O processo de serialização e desserialização ocorre por meio da biblioteca nativa `json`, mapeando os dados diretamente em estruturas de dicionários da linguagem. *Trade-off:* Abre-se mão de escalabilidade para volumes massivos de dados e de suporte nativo a acessos concorrentes em troca de configuração zero e total legibilidade humana do arquivo de texto plano, cenário perfeitamente mitigado pelo escopo de usuário individual e pelo controle de acessos centralizado por meio do padrão de projeto Singleton.
 
 ---
 
