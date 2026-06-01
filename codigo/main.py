@@ -1,44 +1,59 @@
-from motor_investimento import (
-    ContextoAlocacao,
-    AlocacaoConservadora,
-    AlocacaoModerada,
-    AlocacaoArrojada
-)
+from facade import InvestPlanFacade
 
-def executar_demonstracao_terminal() -> None:
-    print("=" * 70)
-    print(" DEMONSTRAÇÃO - MÓDULO DE ALOCAÇÃO (SPRINT 2) ".center(70))
-    print("=" * 70)
+def exibir_menu_principal() -> None:
+    print("\n" + "=" * 50)
+    print(" INVESTPLAN - MENU PRINCIPAL ".center(50))
+    print("=" * 50)
+    print("1. Simular Alocação de Investimentos")
+    print("2. Sair do Sistema")
+    print("=" * 50)
 
+def capturar_opcao_menu() -> str:
+    return input("Escolha uma opção (1-2): ").strip()
+
+def capturar_dados_alocacao() -> tuple[float, str]:
     try:
-        sobra_usuario = float(input("Digite a sobra orçamentária calculada (R$): "))
+        sobra = float(input("Digite a sobra orçamentária (R$): "))
     except ValueError:
-        print("Entrada inválida. Encerrando demonstração.")
-        return
+        return -1.0, "" 
+        
+    perfil = input("Digite o perfil de risco (Conservador, Moderado, Arrojado): ")
+    return sobra, perfil
 
-    perfil_usuario = input("Digite o perfil de risco (Conservador, Moderado, Arrojado): ").strip().lower()
+def exibir_resultado_alocacao(resultado: dict) -> None:
+    print("\n" + "-" * 50)
+    print(" ESTRATÉGIA DE ALOCAÇÃO RECOMENDADA ".center(50))
+    print("-" * 50)
+    for ativo, valor in resultado.items():
+        print(f"* {ativo}: R$ {valor:.2f}")
+    print("-" * 50)
 
-    if perfil_usuario == "conservador":
-        estrategia = AlocacaoConservadora()
-    elif perfil_usuario == "moderado":
-        estrategia = AlocacaoModerada()
-    elif perfil_usuario == "arrojado":
-        estrategia = AlocacaoArrojada()
-    else:
-        print("Perfil inválido. Assumindo Conservador por trava de segurança.")
-        estrategia = AlocacaoConservadora()
-
-    contexto = ContextoAlocacao(estrategia)
-    resultado_alocacao = contexto.executar_alocacao(sobra_usuario)
-
-    print("\n" + "=" * 70)
-    print(" ESTRATÉGIA DE ALOCAÇÃO RECOMENDADA ".center(70))
-    print("=" * 70)
-
-    for ativo, valor in resultado_alocacao.items():
-        print(f"- {ativo}: R$ {valor:.2f}")
-
-    print("=" * 70)
+def iniciar_sistema() -> None:
+    facade = InvestPlanFacade()
+    
+    while True:
+        exibir_menu_principal()
+        opcao = capturar_opcao_menu()
+        
+        if opcao == "1":
+            sobra, perfil = capturar_dados_alocacao()
+            
+            if sobra <= 0:
+                print("\n[!] Erro: Valor inválido. A sobra deve ser um número maior que zero.")
+                continue
+                
+            try:
+                resultado = facade.calcular_investimentos(sobra, perfil)
+                exibir_resultado_alocacao(resultado)
+            except ValueError as erro_regra_negocio:
+                print(f"\n[!] Erro no cálculo: {erro_regra_negocio}")
+                
+        elif opcao == "2":
+            print("\nEncerrando o InvestPlan. Até logo!")
+            break
+            
+        else:
+            print("\n[!] Opção inválida. Tente novamente.")
 
 if __name__ == "__main__":
-    executar_demonstracao_terminal()
+    iniciar_sistema()
