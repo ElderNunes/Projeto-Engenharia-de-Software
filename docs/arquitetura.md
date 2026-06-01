@@ -186,4 +186,32 @@ classDiagram
     InvestPlanFacade --> AvaliadorRisco : orquestra
 ```
 
-*(Espaço reservado para o Guilherme documentar o Singleton)*
+### 4.3 Padrão Creacional: Singleton (Responsável: Guilherme)
+O padrão de projeto creacional **Singleton** foi escolhido para centralizar e coordenar de forma isolada o ciclo de vida e o acesso à camada de armazenamento de dados do InvestPlan, residindo integralmente no módulo de infraestrutura `persistencia.py`.
+
+* **Problema a ser resolvido:** O sistema utiliza um arquivo local estruturado (`dados_usuario.json`) para gravar o estado das finanças e o perfil do usuário. Caso múltiplas partes do sistema instanciassem objetos diferentes de persistência de forma concorrente em memória, haveria o risco iminente de condições de corrida (*race conditions*), concorrência de escrita e dessincronização de dados, corrompendo o arquivo físico síncrono.
+* **Solução e Classes Reais:** Criamos uma classe gerenciadora independente chamada `GerenciadorDados` dentro do arquivo `persistencia.py` que restringe sua própria instanciação. Através da sobreposição do método construtor interno (`__new__`), a classe verifica se uma instância já existe em memória; se sim, reaproveita-a, caso contrário, cria uma única referência global para as operações de I/O.
+* **Benefício Arquitetural:** Garante um ponto único de acesso global aos dados persistidos, assegurando a integridade referencial do estado da aplicação durante toda a sessão de execução e blindando o sistema contra criação redundante de objetos em memória, além de isolar completamente os detalhes de infraestrutura do restante do sistema.
+
+### 4.3.1 Diagrama de Classes UML (Singleton)
+
+```mermaid
+classDiagram
+    class GerenciadorDados {
+        -_instancia: GerenciadorDados$
+        -_caminho_arquivo: str
+        -GerenciadorDados()
+        +get_instancia() GerenciadorDados$
+        +carregar_dados() dict
+        +salvar_dados(dados: dict) bool
+    }
+    GerenciadorDados --> GerenciadorDados : limita_instancia_unica
+```
+### 4.3.2 Detalhamento dos Módulos e Atributos Reais do Código
+**`GerenciadorDados` (Módulo persistencia.py):** Classe central do padrão, isolada em seu próprio arquivo de infraestrutura. Ela é auto-contida e encapsula toda a lógica de manipulação física de arquivos do sistema.
+
+**`_instancia`:** Atributo de classe estático e privado que retém a referência da única instância ativa do objeto em memória durante a execução do processo.
+
+**`_caminho_arquivo`:** Atributo de instância privado do tipo string que armazena o local do arquivo físico (dados_usuario.json) no disco.
+
+**`get_instancia()` / Construtor __new__:** Mecanismos de controle de ciclo de vida que interceptam a criação do objeto em Python, aplicando a validação lógica que bloqueia a duplicação e disponibiliza os métodos de leitura (carregar_dados) e salvamento físico (salvar_dados).
