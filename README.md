@@ -95,17 +95,17 @@ Nesta sprint, o trabalho foi dividido em fatias verticais para atender ao requis
   - *Padrões de Projeto:* Desenho UML e documentação do padrão **Singleton** (gerenciamento de estado e controle de acesso a arquivos locais).
   - *Codificação Inicial:* Implementação dos esqueletos de persistência de dados e validação primária de entradas no terminal.
 
-# Sprint 3: Desenvolvimento Base (09/06 a 12/06)
+**Sprint 3: Desenvolvimento Base (09/06 a 12/06)**
 
-## 1. Resumo do Briefing
+**1. Resumo do Briefing**
 O objetivo na Sprint 3 será entregar um fluxo funcional, limpo e defensável: **Orçamento → Perfil → Alocação → Projeção → Relatório `.txt`**. A decisão central é não aumentar o escopo por volume, mas extrair máxima qualidade arquitetural, isolando I/O do terminal, implementando persistência atômica, e utilizando *dataclasses* (DTOs) para trânsito de informações entre as camadas.
 
-## User Review Required
+**User Review Required**
 > [!IMPORTANT]
 > - A estrutura de revisão cruzada exigirá que cada membro da equipe teste o módulo do outro.
 > - As constantes de taxas de rentabilidade serão isoladas em `config.py` e requerem aprovação final dos valores numéricos.
 
-## 2. Decisões Técnicas Tomadas
+**2. Decisões Técnicas Tomadas**
 - **DTOs (Data Transfer Objects):** A `InvestPlanFacade` retornará um objeto `ResultadoSimulacao` consolidado. O `main.py` será estritamente um *entrypoint*.
 - **I/O Isolado:** Toda a interação e validação textual de dados migrará para o módulo `cli_utils.py`.
 - **Projeção Desacoplada:** Os juros compostos habitarão o `projecao.py`, não interferindo na coesão do *Strategy* de alocação original.
@@ -113,12 +113,12 @@ O objetivo na Sprint 3 será entregar um fluxo funcional, limpo e defensável: *
 - **Fail-fast (Regra de Negócio):** Respostas no questionário que acusam resgate imediato ou aversão forçam o perfil *Conservador*, interrompendo o cálculo de score.
 - **Prevenção de Quebras:** Bloqueio amigável de tela (déficit) se gastos passarem da renda.
 
-## 3. Riscos Restantes e Mitigação
+**3. Riscos Restantes e Mitigação**
 > [!WARNING]
 > - **Risco de Integração:** O alto desacoplamento gerará muitos arquivos novos simultaneamente. **Mitigação:** O desenvolvimento deve ser puxado da e para a `develop` constantemente, evitando *Big Bang merges*.
 > - **Risco de Apresentação:** Um membro "travar" ao explicar o código de outro. **Mitigação:** Seguir rigorosamente o cronograma de *Revisão Cruzada Obrigatória*, com ensaios de defesa interna.
 
-## Proposed Changes
+**Proposed Changes**
 
 Arquitetura física final preentedida para o Sprint 3. Manter isolamento para facilitar refatorações da Sprint 4 (testes `unittest`).
 
