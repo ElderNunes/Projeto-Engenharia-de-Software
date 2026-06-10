@@ -95,8 +95,79 @@ Nesta sprint, o trabalho foi dividido em fatias verticais para atender ao requis
   - *Padrões de Projeto:* Desenho UML e documentação do padrão **Singleton** (gerenciamento de estado e controle de acesso a arquivos locais).
   - *Codificação Inicial:* Implementação dos esqueletos de persistência de dados e validação primária de entradas no terminal.
 
-**Sprint 3: Desenvolvimento Base (09/06 a 12/06)**
-- Todos os membros: Implementação balanceada das funcionalidades em Python. Cada membro assumirá o ciclo completo (lógica, testes e integração) de pelo menos um módulo do sistema (ex: Módulo de Gastos, Módulo de Alocação, Módulo de Relatório). Qualquer membro estará apto a explicar qualquer parte do código-fonte durante as revisões.
+# Planejamento Consolidado — Sprint 3 (InvestPlan)
+
+## 1. Resumo do Briefing Consolidado
+O objetivo na Sprint 3 será entregar um fluxo funcional, limpo e defensável: **Orçamento → Perfil → Alocação → Projeção → Relatório `.txt`**. A decisão central é não aumentar o escopo por volume, mas extrair máxima qualidade arquitetural, isolando I/O do terminal, implementando persistência atômica, e utilizando *dataclasses* (DTOs) para trânsito de informações entre as camadas.
+
+## User Review Required
+> [!IMPORTANT]
+> - A estrutura de revisão cruzada exigirá que cada membro da equipe teste o módulo do outro.
+> - As constantes de taxas de rentabilidade serão isoladas em `config.py` e requerem aprovação final dos valores numéricos.
+
+## 2. Decisões Técnicas Tomadas
+- **DTOs (Data Transfer Objects):** A `InvestPlanFacade` retornará um objeto `ResultadoSimulacao` consolidado. O `main.py` será estritamente um *entrypoint*.
+- **I/O Isolado:** Toda a interação e validação textual de dados migrará para o módulo `cli_utils.py`.
+- **Projeção Desacoplada:** Os juros compostos habitarão o `projecao.py`, não interferindo na coesão do *Strategy* de alocação original.
+- **Alta Robustez (Atomicidade):** Salvamento atômico (escrita em `.tmp` seguida por `os.replace`) implantado em `persistencia.py` e `relatorio.py`.
+- **Fail-fast (Regra de Negócio):** Respostas no questionário que acusam resgate imediato ou aversão forçam o perfil *Conservador*, interrompendo o cálculo de score.
+- **Prevenção de Quebras:** Bloqueio amigável de tela (déficit) se gastos passarem da renda.
+
+## 3. Riscos Restantes e Mitigação
+> [!WARNING]
+> - **Risco de Integração:** O alto desacoplamento gerará muitos arquivos novos simultaneamente. **Mitigação:** O desenvolvimento deve ser puxado da e para a `develop` constantemente, evitando *Big Bang merges*.
+> - **Risco de Apresentação:** Um membro "travar" ao explicar o código de outro. **Mitigação:** Seguir rigorosamente o cronograma de *Revisão Cruzada Obrigatória*, com ensaios de defesa interna.
+
+## Proposed Changes
+
+Arquitetura física final preentedida para o Sprint 3. Manter isolamento para facilitar refatorações da Sprint 4 (testes `unittest`).
+
+### [MODIFY] [main.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/main.py)
+Remoção de lógicas de I/O e validações de float. Fica responsável apenas pela instanciação da Facade e pelo loop infinito do menu principal.
+### [MODIFY] [facade.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/facade.py)
+Deixa de ser uma rota de passagem e passa a orquestrar de fato as chamadas para as classes de orçamento, avaliação de risco, motor e relatório, gerando o DTO final de saída.
+### [MODIFY] [persistencia.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/persistencia.py)
+Adoção das funções `os.fsync` e `os.replace` para proteger o salvamento do `dados_usuario.json` contra falhas de sistema.
+### [MODIFY] [motor_investimento.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/motor_investimento.py)
+Nenhuma grande reescrita algorítmica, apenas readequações em assinaturas para suportar as entradas da nova Facade.
+### [NEW] [cli_utils.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/cli_utils.py)
+Funções dedicadas para desenhar telas e bloquear formatações incorretas sem lançar *tracebacks* (ex: `ler_float_obrigatorio`, `exibir_sucesso`, etc).
+### [NEW] [modelos.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/modelos.py)
+Declaração das `@dataclass` que trafegam entre as camadas, como `ResultadoSimulacao` e `ResultadoOrcamento`.
+### [NEW] [excecoes.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/excecoes.py)
+Definições semânticas de exceções da aplicação, como `OrcamentoEstouradoError` e `ErroExportacaoRelatorio`.
+### [NEW] [config.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/config.py)
+Constantes `TAXAS_ANUAIS_POR_PERFIL` (0.08, 0.10, 0.12) e `CATEGORIAS_OBRIGATORIAS`.
+### [NEW] [orcamento.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/orcamento.py)
+Lógica matemática para absorver renda bruta, descontar CLT/PJ (RN-04) e processar as oito categorias, detectando déficit.
+### [NEW] [perfil_risco.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/perfil_risco.py)
+Lógica computacional das 3 perguntas fundamentais (RN-06), processando pontuações.
+### [NEW] [projecao.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/projecao.py)
+Funções matemáticas puras para computar os juros compostos em cenários de 1, 5 e 10 anos.
+### [NEW] [relatorio.py](file:///C:/Users/felip/Downloads/Projeto-Engenharia-de-Software-1/codigo/relatorio.py)
+Formatador string que consome o `ResultadoSimulacao` e grava de forma atômica o plano em `plano_investplan.txt`.
+
+---
+
+## Verification Plan
+
+### Divisão de Tarefas Dinâmica (Defesa Cruzada)
+| Módulos Atribuídos | Desenvolvedor Principal | Revisor Obrigatório | Responsável por Apresentar |
+|:---|:---|:---|:---|
+| `orcamento.py`, `persistencia.py`, `projecao.py` | **Guilherme** | Felipe | Elder |
+| `perfil_risco.py`, `relatorio.py`, `facade.py` | **Elder** | Guilherme | Felipe |
+| `motor_investimento.py`, `cli_utils.py`, `main.py` | **Felipe** | Elder | Guilherme |
+
+*Regra de Ouro da Equipe: Nenhum *merge* vai para a branch principal sem que o desenvolvedor dono explique a lógica para o seu Revisor.*
+
+### Plano de Demonstração (Review de 12/06)
+1. **O Cenário Perfeito (Happy Path):** Demonstrar a viabilidade inserindo uma Renda CLT razoável, 8 despesas balanceadas e obtendo um relatório perfeitamente formatado.
+2. **Robustez - Tratamento I/O (HU-05):** Inserir textos em locais que pedem dinheiro. Demonstrar a proteção do `cli_utils.py`.
+3. **Robustez - Regra de Negócio (RN-05):** Inserir despesas estouradas. Demonstrar o diagnóstico negativo bloqueando o usuário educadamente, sem derrubar a aplicação.
+
+### Argumentação Executiva para o Professor
+Recomendação de *pitch* oral durante a entrega:
+> *"Nesta Sprint, o foco principal não foi empilhar features, mas amadurecer a arquitetura. Adotamos **Data Transfer Objects (DTOs)** para desacoplar a nossa interface da nossa lógica e extraímos as rotinas da Facade que pertenciam ao console para o **cli_utils.py**. Aplicamos a regra de **atomicidade** em todas as interações com o sistema de arquivos para blindar nossos clientes de corrompimento de dados. Isso nos prepara organicamente para a última Sprint de testes automatizados unitários."*
 
 **Sprint 4: Testes e Refatoração (16/06 a 19/06)**
 - Felipe: Responsável pela estratégia e configuração inicial dos Testes Automatizados utilizando o módulo `unittest`.
