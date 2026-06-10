@@ -39,8 +39,41 @@ Para garantir a integridade do código e permitir o desenvolvimento paralelo sem
   * `refactor:` Mudança no código que não altera comportamento (ex: `refactor: renomeia variaveis para clareza`).
   * `docs:` Alterações exclusivas na documentação (ex: `docs: atualiza adr da arquitetura`).
 
-*(Espaço reservado para o Guilherme adicionar Type Hinting)*
+### 2.3 Diretrizes de Type Hinting
+O uso de indicações de tipo (*Type Hinting*) é obrigatório em toda a base de código do InvestPlan, em conformidade com a PEP 484. A adoção desta prática visa mitigar erros em tempo de design, documentar nativamente as assinaturas do sistema e facilitar a análise estática por ferramentas de linting.
 
+* **Tipagem de Parâmetros e Retornos:** Todas as funções e métodos devem declarar explicitamente o tipo de seus argumentos e o tipo do valor de retorno, inclusive retornos nulos (`None`).
+* **Coleções Estruturadas:** Para dicionários, listas e tuplas, deve-se utilizar as definições do módulo `typing` para especificar o conteúdo das coleções.
+* **Flexibilidade Controlada:** O uso de `Union` ou `Optional` deve ser empregado quando um parâmetro ou retorno puder assumir múltiplos tipos ou valores nulos.
+
+Exemplos:
+```python
+
+from typing import Dict, List, Optional, Any
+
+def calcular_liquida(bruta: float, tipo_regime: str) -> float:
+    pass
+
+def extrair_dados_persistidos() -> Optional[Dict[str, Any]]:
+    pass
+```
+
+### 2.4 Política Global de Tratamento de Erros
+O sistema adota uma postura defensiva no manejo de exceções para garantir a resiliência da aplicação em ambiente de terminal (CLI), impedindo interrupções abruptas da execução causadas por falhas internas ou por entradas de dados inválidas.
+
+* **Proibição de Captura Genérica (*Bare Except*):** É vedada a utilização de blocos `except:` vazios ou desprovidos de classe de erro. Toda captura de exceção deve especificar a classe exata do erro esperado (ex: `ValueError`).
+* **Isolamento por Exceções de Negócio:** Falhas decorrentes de violações diretas de regras de negócio devem disparar exceções customizadas, herdadas de uma classe base unificada da aplicação.
+* **Ciclo de Recuperação na Interface:** Erros de digitação ou falhas de conversão cometidos pelo usuário devem ser tratados localmente por meio de loops de repetição na camada de terminal, interceptando o erro e impedindo a exibição de *tracebacks* do Python.
+
+```python
+class InvestPlanException(Exception):
+    """Classe base para todas as exceções de negócio do sistema."""
+    pass
+
+class OrcamentoEstouradoError(InvestPlanException):
+    """Sinaliza que as despesas superam a renda disponível."""
+    pass
+```
 ---
 
 ## 3. Diagrama de Arquitetura e Trade-offs
@@ -63,7 +96,10 @@ Esta camada é a porta de entrada da aplicação, encarregada unicamente de capt
 
 * **Trade-off Justificado:** A escolha por uma interface em Linha de Comando (CLI) textual foi tomada em detrimento de uma interface gráfica (GUI) ou Web para este estágio do projeto. O *trade-off* negativo é uma experiência de usuário (UX) mais árida e limitada visualmente. Contudo, o impacto positivo é massivo na velocidade de desenvolvimento, na portabilidade imediata (roda em qualquer terminal Python sem dependências de sistema operacional) e no custo de infraestrutura zero. Essa simplicidade na camada visual permitiu concentrar o esforço de engenharia na robustez dos algoritmos financeiros e na qualidade arquitetural do Core.
 
-*(Espaço reservado para o Guilherme justificar a Persistência Local)*
+### 3.3 Camada de Persistência Local (JSON)
+Esta camada é responsável por gerenciar o ciclo de vida dos dados do sistema, realizando a leitura e a escrita do estado da aplicação, dados orçamentários e perfis de risco em um arquivo estruturado local denominado `dados_usuario.json`.
+
+* **Trade-off Justificado:** A escolha por este modelo, em detrimento de um Sistema Gerenciador de Banco de Dados (SGBD) relacional tradicional, baseia-se nos requisitos de portabilidade e simplicidade do projeto, permitindo a execução imediata da aplicação em qualquer ambiente operacional com Python instalado, sem a necessidade de instalações ou gerenciamento de credenciais. O processo de serialização e desserialização ocorre por meio da biblioteca nativa `json`, mapeando os dados diretamente em estruturas de dicionários da linguagem. *Trade-off:* Abre-se mão de escalabilidade para volumes massivos de dados e de suporte nativo a acessos concorrentes em troca de configuração zero e total legibilidade humana do arquivo de texto plano, cenário perfeitamente mitigado pelo escopo de usuário individual e pelo controle de acessos centralizado por meio do padrão de projeto Singleton.
 
 ---
 
@@ -150,4 +186,32 @@ classDiagram
     InvestPlanFacade --> AvaliadorRisco : orquestra
 ```
 
-*(Espaço reservado para o Guilherme documentar o Singleton)*
+### 4.3 Padrão Creacional: Singleton (Responsável: Guilherme)
+O padrão de projeto creacional **Singleton** foi escolhido para centralizar e coordenar de forma isolada o ciclo de vida e o acesso à camada de armazenamento de dados do InvestPlan, residindo integralmente no módulo de infraestrutura `persistencia.py`.
+
+* **Problema a ser resolvido:** O sistema utiliza um arquivo local estruturado (`dados_usuario.json`) para gravar o estado das finanças e o perfil do usuário. Caso múltiplas partes do sistema instanciassem objetos diferentes de persistência de forma concorrente em memória, haveria o risco iminente de condições de corrida (*race conditions*), concorrência de escrita e dessincronização de dados, corrompendo o arquivo físico síncrono.
+* **Solução e Classes Reais:** Criamos uma classe gerenciadora independente chamada `GerenciadorDados` dentro do arquivo `persistencia.py` que restringe sua própria instanciação. Através da sobreposição do método construtor interno (`__new__`), a classe verifica se uma instância já existe em memória; se sim, reaproveita-a, caso contrário, cria uma única referência global para as operações de I/O.
+* **Benefício Arquitetural:** Garante um ponto único de acesso global aos dados persistidos, assegurando a integridade referencial do estado da aplicação durante toda a sessão de execução e blindando o sistema contra criação redundante de objetos em memória, além de isolar completamente os detalhes de infraestrutura do restante do sistema.
+
+### 4.3.1 Diagrama de Classes UML (Singleton)
+
+```mermaid
+classDiagram
+    class GerenciadorDados {
+        -_instancia: GerenciadorDados$
+        -_caminho_arquivo: str
+        -GerenciadorDados()
+        +get_instancia() GerenciadorDados$
+        +carregar_dados() dict
+        +salvar_dados(dados: dict) bool
+    }
+    GerenciadorDados --> GerenciadorDados : limita_instancia_unica
+```
+### 4.3.2 Detalhamento dos Módulos e Atributos Reais do Código
+**`GerenciadorDados` (Módulo persistencia.py):** Classe central do padrão, isolada em seu próprio arquivo de infraestrutura. Ela é auto-contida e encapsula toda a lógica de manipulação física de arquivos do sistema.
+
+**`_instancia`:** Atributo de classe estático e privado que retém a referência da única instância ativa do objeto em memória durante a execução do processo.
+
+**`_caminho_arquivo`:** Atributo de instância privado do tipo string que armazena o local do arquivo físico (dados_usuario.json) no disco.
+
+**`get_instancia()` / Construtor __new__:** Mecanismos de controle de ciclo de vida que interceptam a criação do objeto em Python, aplicando a validação lógica que bloqueia a duplicação e disponibiliza os métodos de leitura (carregar_dados) e salvamento físico (salvar_dados).
