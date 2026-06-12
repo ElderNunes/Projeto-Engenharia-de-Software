@@ -1,2 +1,12 @@
+# Arquivos de dados gerados dinamicamente pelo sistema
+*.json
+*.txt
+*.tmp
+
+# Ignorar a pasta de cache do Python
 __pycache__/
 *.pyc
+
+# Ignorar arquivos temporários do sistema operacional
+.DS_Store
+Thumbs.db
