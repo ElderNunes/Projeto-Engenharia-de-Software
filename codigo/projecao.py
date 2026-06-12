@@ -6,11 +6,10 @@ class SimuladorProjecao:
     de juros compostos mensais sobre o portfólio de investimentos alocado.
     """
     def __init__(self) -> None:
-        # Taxas médias mensais estimadas com base no mercado real
         self._taxas_mensais: Dict[str, float] = {
-            "Renda Fixa Curto Prazo": 0.008,  # Aprox. 10% a.a.
-            "Renda Fixa Longo Prazo": 0.009,  # Aprox. 11.4% a.a.
-            "Ativos de Risco": 0.012          # Aprox. 15.3% a.a.
+            "Renda Fixa Curto Prazo": 0.008, 
+            "Renda Fixa Longo Prazo": 0.009,
+            "Ativos de Risco": 0.012
         }
 
     def calcular_patrimonio_futuro(self, alocacao_mensal: Dict[str, float], anos: int) -> float:
@@ -27,7 +26,6 @@ class SimuladorProjecao:
             taxa = self._taxas_mensais.get(ativo, 0.005)
             saldo_ativo = 0.0
             
-            # Fórmula de aportes recorrentes com juros compostos
             for _ in range(meses_totais):
                 saldo_ativo = (saldo_ativo + aporte_mensal) * (1 + taxa)
                 
