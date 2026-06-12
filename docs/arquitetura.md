@@ -78,7 +78,14 @@ class OrcamentoEstouradoError(InvestPlanException):
 
 ## 3. Diagrama de Arquitetura e Trade-offs
 
-A arquitetura do InvestPlan adota uma separação por camadas estruturais (Layered Architecture) para isolar a interface de texto, a lógica financeira e a persistência de arquivos.
+A arquitetura do InvestPlan adota o padrão **Layered Architecture (Arquitetura em Camadas)**.
+
+**Origem Teórica e Justificativa:**
+A Arquitetura em Camadas é um dos estilos arquiteturais mais consolidados da Engenharia de Software (descrito em literaturas clássicas como *Software Architecture in Practice*). A sua premissa teórica central é o princípio da **Separação de Interesses (Separation of Concerns)**. 
+
+**Por que escolhemos essa arquitetura?**
+No contexto do InvestPlan, foi vital garantir que a complexidade da matemática financeira (o Core) jamais se misturasse com comandos interativos de terminal (`print`/`input`) ou com as rotinas de leitura de disco (JSON). Ao isolar o sistema em camadas unidirecionais fechadas, garantimos que cada estrato tenha uma responsabilidade única. O benefício prático é que a equipe ganha a habilidade de, no futuro, descartar completamente a interface CLI e plugar uma interface Web, ou trocar o JSON por um Banco de Dados SQL, sem precisar reescrever absolutamente nenhuma linha de código da lógica de negócios.
+
 
 ```mermaid
 flowchart TD
@@ -150,7 +157,12 @@ classDiagram
 * **Classes Concretas (`AlocacaoConservadora`, `AlocacaoModerada`, `AlocacaoArrojada`):** Contêm os coeficientes matemáticos específicos de cada perfil de risco (conforme a regra RN-07), processando o valor numérico da sobra orçamentária e devolvendo um dicionário estruturado com as quantias exatas destinadas a cada ativo.
 
 ### 4.2 Padrão Facade: Orquestrador de Interface e Fluxo (Responsável: Elder)
-O padrão estrutural **Facade** (Fachada) foi adotado como o ponto central de controle da interface textual, atuando como um mediador unificado entre o loop do terminal e o ecossistema de lógica de negócios.
+O padrão estrutural **Facade** (Fachada), foi adotado como o ponto central de controle da interface textual, atuando como um mediador unificado entre o loop do terminal e o ecossistema de lógica de negócios.
+
+> **Analogia Prática:**
+> Pensamos nesse padrão de projeto como o **Gerente do Banco (ou Assessor Financeiro)** conversando com o cliente (que é a nossa tela do terminal). 
+> O usuário no terminal só conversa com esse Gerente. Ele não precisa ir na sala da contabilidade calcular a sua Renda Líquida (`GerenciadorOrcamento`), não precisa fazer o cálculo manual de pontuação com o auditor de risco (`AvaliadorRisco`) e não precisa bater na porta da mesa de operações para fracionar a sua sobra (`ContextoAlocacao`). 
+> O terminal (CLI) simplesmente entrega os dados brutos ao Gerente (a nossa Facade). A Facade vai para os bastidores, orquestra todas essas lógicas matemáticas de forma invisível e apenas devolve o diagnóstico e o plano de ação mastigado e formatado de volta para a tela.
 
 * **Problema a ser resolvido:** A Camada de Interface precisa gerenciar múltiplos menus (Orçamento, Questionário de Risco, Simulação de Alocação) e disparar chamadas para diversas regras de negócio diferentes. Se a lógica da CLI fizesse chamadas diretas a todas as classes do Core, o código da interface ficaria altamente acoplado à implementação das classes de negócio. Qualquer mudança em um método financeiro exigiria alterar a tela do terminal.
 * **Solução e Classes Reais:** Criamos a classe `InvestPlanFacade`. Ela expõe métodos de alto nível para o loop do terminal (como `orquestrar_fluxo_orcamento()` ou `gerar_diagnostico_completo()`). Por trás dos panos, o Facade instancia as classes de negócio do Core, passa os parâmetros, consolida as respostas do motor econômico e devolve os dados mastigados para a CLI apenas exibir.
