@@ -1,9 +1,14 @@
 {
-    "sobra_mensal": 323.0,
-    "perfil_risco": "arrojado",
-    "alocacao": {
-        "Renda Fixa Curto Prazo": 96.9,
-        "Renda Fixa Longo Prazo": 64.6,
-        "Ativos de Risco": 161.5
+    "renda_bruta": 1700.0,
+    "despesas": {
+        "internet": 200.0,
+        "agua,luz": 250.0,
+        "mercado": 600.0
+    },
+    "perfil_risco": "moderado",
+    "ultima_alocacao": {
+        "Renda Fixa Curto Prazo": 325.0,
+        "Renda Fixa Longo Prazo": 195.0,
+        "Ativos de Risco": 130.0
     }
 }
