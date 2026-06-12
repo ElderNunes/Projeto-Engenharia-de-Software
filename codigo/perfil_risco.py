@@ -54,15 +54,11 @@ class AvaliadorPerfilRisco:
         if not respostas or len(respostas) != 3:
             raise ValueError("O questionário exige exatamente 3 respostas para calcular o perfil.")
 
-        # Padroniza as respostas para minúsculas
         r1, r2, r3 = [resp.lower().strip() for resp in respostas]
 
-        # 🚨 REGRA DE NEGÓCIO: Fail-Fast (Aversão extrema a risco ou prazo muito curto)
         if r1 == 'a' or r2 == 'a':
             return "conservador"
 
-        # Tabela de Pontuação para quem passou do Fail-Fast
-        # Se chegou aqui, r1 e r2 são obrigatoriamente 'b' ou 'c'
         tabela_pontos = {
             1: {'b': 2, 'c': 3},
             2: {'b': 2, 'c': 3},
@@ -74,7 +70,6 @@ class AvaliadorPerfilRisco:
         score += tabela_pontos[2].get(r2, 0)
         score += tabela_pontos[3].get(r3, 0)
 
-        # Classificação final baseada no Score
         if score <= 6:
             return "moderado"
         else:

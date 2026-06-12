@@ -15,10 +15,8 @@ def iniciar_sistema() -> None:
         if opcao == "1":
             cli_utils.exibir_titulo("NOVA SIMULAÇÃO")
             try:
-                # 1. Pega a sobra (O Guilherme e o Felipe vão melhorar isso depois com o orcamento.py)
                 sobra = float(input("Digite a sobra orçamentária calculada (R$): "))
                 
-                # 2. Pega as perguntas da Facade e exibe para o usuário
                 perguntas = facade.obter_perguntas_risco()
                 respostas = []
                 print("\n--- Questionário de Risco ---")
@@ -29,11 +27,8 @@ def iniciar_sistema() -> None:
                     resp = input("Sua resposta (a/b/c): ")
                     respostas.append(resp)
                 
-                # 3. Manda tudo para o Garçom (Facade) processar!
-                # ADEUS PRINT ANTIGO DO SEU AMIGO!
                 resultado_dto = facade.processar_simulacao_completa(sobra, respostas)
                 
-                # 4. Exibe a caixa pronta (DTO) que a Facade devolveu
                 cli_utils.exibir_titulo("ESTRATÉGIA DE ALOCAÇÃO RECOMENDADA")
                 print(f"Perfil detectado: {resultado_dto.perfil.capitalize()}")
                 print("-" * 30)
