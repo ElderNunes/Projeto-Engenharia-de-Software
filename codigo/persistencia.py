@@ -30,3 +30,12 @@ class GerenciadorDados:
             return True
         except IOError:
             return False
+    def salvar_sessao_completa(self, renda: float, despesas: Dict[str, float], perfil: str, alocacao: Dict[str, float]) -> bool:
+        """Estrutura os dados brutos e os persiste de forma integrada."""
+        payload = {
+            "renda_bruta": renda,
+            "despesas": despesas,
+            "perfil_risco": perfil,
+            "ultima_alocacao": alocacao
+        }
+        return self.salvar_dados(payload)
