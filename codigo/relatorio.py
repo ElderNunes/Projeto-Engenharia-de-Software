@@ -7,8 +7,12 @@ class GeradorRelatorio:
     utilizando a técnica de escrita atômica para evitar corrupção de arquivos.
     """
     
-    def __init__(self, caminho_arquivo: str = "plano_investplan.txt"):
-        self.caminho_arquivo = caminho_arquivo
+    def __init__(self, caminho_arquivo: str = None):
+        if caminho_arquivo is None:
+            diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+            self.caminho_arquivo = os.path.join(diretorio_atual, "plano_investplan.txt")
+        else:
+            self.caminho_arquivo = caminho_arquivo
 
     def gerar_txt(self, resultado_simulacao) -> bool:
         """
@@ -21,8 +25,10 @@ class GeradorRelatorio:
             "         RELATÓRIO DE INVESTIMENTO - INVESTPLAN",
             "=" * 50,
             f"Data da Simulação: {data_atual}",
-            f"Perfil de Risco: {resultado_simulacao.perfil.upper()}",
+            f"Renda Bruta: R$ {resultado_simulacao.renda_bruta:.2f}",
+            f"Total de Despesas: R$ {resultado_simulacao.total_despesas:.2f}",
             f"Sobra Orçamentária: R$ {resultado_simulacao.sobra_mensal:.2f}",
+            f"Perfil de Risco: {resultado_simulacao.perfil.upper()}",
             "-" * 50,
             "SUA ALOCAÇÃO RECOMENDADA:",
         ]
@@ -30,6 +36,8 @@ class GeradorRelatorio:
         for ativo, valor in resultado_simulacao.alocacao.items():
             linhas.append(f"  * {ativo}: R$ {valor:.2f}")
             
+        linhas.append("-" * 50)
+        linhas.append(f"Projeção do Patrimônio em {resultado_simulacao.anos_projecao} anos: R$ {resultado_simulacao.patrimonio_projetado:.2f}")
         linhas.append("-" * 50)
         linhas.append("Lembre-se: Invista com responsabilidade e consistência.")
         linhas.append("=" * 50)

@@ -1,5 +1,25 @@
 import cli_utils
+import csv
+import os
 from facade import InvestPlanFacade
+
+def imprimir_relatorio_tela(resultado_dto) -> None:
+    """Função utilitária para aplicar o princípio DRY na impressão dos resultados."""
+    cli_utils.exibir_titulo("RESULTADO DA SIMULAÇÃO")
+    print(f"Renda Bruta: R$ {resultado_dto.renda_bruta:.2f}")
+    print(f"Total de Despesas: R$ {resultado_dto.total_despesas:.2f}")
+    print(f"Sobra Líquida (Aporte Mensal): R$ {resultado_dto.sobra_mensal:.2f}")
+    print("-" * 30)
+    
+    print(f"Perfil detectado: {resultado_dto.perfil.capitalize()}")
+    print("Estratégia de Alocação Recomendada:")
+    for ativo, valor in resultado_dto.alocacao.items():
+        print(f"* {ativo}: R$ {valor:.2f}")
+    print("-" * 30)
+    
+    print(f"Projeção do Patrimônio em {resultado_dto.anos_projecao} anos: R$ {resultado_dto.patrimonio_projetado:.2f}")
+    print("\n[OK] Simulação salva e relatório .txt gerado com sucesso!")
+    print("-" * 50)
 
 def iniciar_sistema() -> None:
     """Ponto de entrada do sistema. Apenas instancia a Facade e o loop do menu principal."""
@@ -9,8 +29,9 @@ def iniciar_sistema() -> None:
         cli_utils.exibir_titulo("INVESTPLAN - MENU PRINCIPAL")
         print("1. Iniciar Simulação Completa")
         print("2. Sair do Sistema")
+        print("3. Importar Simulações em Lote (CSV)")
         
-        opcao = cli_utils.ler_opcao("\nEscolha uma opção (1-2): ", ["1", "2"])
+        opcao = cli_utils.ler_opcao("\nEscolha uma opção (1-3): ", ["1", "2", "3"])
         
         if opcao == "1":
             cli_utils.exibir_titulo("NOVA SIMULAÇÃO")
@@ -47,21 +68,7 @@ def iniciar_sistema() -> None:
                     anos_projecao=anos_projecao
                 )
                 
-                cli_utils.exibir_titulo("RESULTADO DA SIMULAÇÃO")
-                print(f"Renda Bruta: R$ {resultado_dto.renda_bruta:.2f}")
-                print(f"Total de Despesas: R$ {resultado_dto.total_despesas:.2f}")
-                print(f"Sobra Líquida (Aporte Mensal): R$ {resultado_dto.sobra_mensal:.2f}")
-                print("-" * 30)
-                
-                print(f"Perfil detectado: {resultado_dto.perfil.capitalize()}")
-                print("Estratégia de Alocação Recomendada:")
-                for ativo, valor in resultado_dto.alocacao.items():
-                    print(f"* {ativo}: R$ {valor:.2f}")
-                print("-" * 30)
-                
-                print(f"Projeção do Patrimônio em {resultado_dto.anos_projecao} anos: R$ {resultado_dto.patrimonio_projetado:.2f}")
-                print("\n[✔] Simulação salva e relatório .txt gerado com sucesso!")
-                print("-" * 50)
+                imprimir_relatorio_tela(resultado_dto)
                 
             except ValueError as e:
                 cli_utils.exibir_alerta(f"Erro de validação: {e}")
@@ -71,6 +78,53 @@ def iniciar_sistema() -> None:
         elif opcao == "2":
             cli_utils.exibir_sucesso("Encerrando o InvestPlan. Até logo!")
             break
+            
+        elif opcao == "3":
+            cli_utils.exibir_titulo("IMPORTAÇÃO EM LOTE VIA CSV")
+            nome_arquivo = input("Digite o nome do arquivo CSV (ex: clientes_teste.csv): ").strip()
+            
+            caminho_completo = os.path.join(os.path.dirname(__file__), nome_arquivo)
+            
+            if not os.path.exists(caminho_completo):
+                cli_utils.exibir_alerta(f"Arquivo '{nome_arquivo}' não encontrado na pasta do código.")
+                continue
+                
+            try:
+                with open(caminho_completo, mode='r', encoding='utf-8-sig') as arquivo_csv:
+                    leitor = csv.DictReader(arquivo_csv)
+                    linhas_processadas = 0
+                    
+                    for linha in leitor:
+                        linhas_processadas += 1
+                        print(f"\n>> PROCESSANDO CLIENTE #{linhas_processadas} <<")
+                        
+                        renda_csv = float(linha["Renda"])
+                        anos_csv = int(linha["AnosProjecao"])
+                        respostas_csv = [linha["Resposta1"].strip().lower(), linha["Resposta2"].strip().lower(), linha["Resposta3"].strip().lower()]
+                        
+                        despesas_csv = {}
+                        string_despesas = linha["Despesas"].strip()
+                        if string_despesas:
+                            pares = string_despesas.split(";")
+                            for par in pares:
+                                if ":" in par:
+                                    cat, val = par.split(":")
+                                    despesas_csv[cat.strip()] = float(val)
+                                    
+                        try:
+                            resultado_dto = facade.processar_simulacao_completa(
+                                renda=renda_csv,
+                                despesas=despesas_csv,
+                                respostas_risco=respostas_csv,
+                                anos_projecao=anos_csv
+                            )
+                            imprimir_relatorio_tela(resultado_dto)
+                        except ValueError as e:
+                            cli_utils.exibir_alerta(f"Erro ao processar cliente #{linhas_processadas}: {e}")
+                            
+                    cli_utils.exibir_sucesso(f"Processamento em Lote concluído! {linhas_processadas} simulações processadas.")
+            except Exception as e:
+                cli_utils.exibir_alerta(f"Erro ao ler o CSV: {e}")
 
 if __name__ == "__main__":
     iniciar_sistema()
