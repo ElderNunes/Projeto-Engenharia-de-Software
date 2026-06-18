@@ -18,6 +18,9 @@ class GeradorRelatorio:
         """
         Recebe o DTO com o resultado da simulação, formata e salva de forma atômica.
         """
+        def formatar_br(valor: float) -> str:
+            return f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
         data_atual = datetime.now().strftime("%d/%m/%Y %H:%M")
         
         linhas = [
@@ -25,9 +28,9 @@ class GeradorRelatorio:
             "         RELATÓRIO DE INVESTIMENTO - INVESTPLAN",
             "=" * 50,
             f"Data da Simulação: {data_atual}",
-            f"Renda Bruta: R$ {resultado_simulacao.renda_bruta:.2f}",
-            f"Total de Despesas: R$ {resultado_simulacao.total_despesas:.2f}",
-            f"Sobra Orçamentária: R$ {resultado_simulacao.sobra_mensal:.2f}",
+            f"Renda Bruta: R$ {formatar_br(resultado_simulacao.renda_bruta)}",
+            f"Total de Despesas: R$ {formatar_br(resultado_simulacao.total_despesas)}",
+            f"Sobra Orçamentária: R$ {formatar_br(resultado_simulacao.sobra_mensal)}",
             f"Perfil de Risco: {resultado_simulacao.perfil.upper()}",
             "-" * 50,
             "SUA ALOCAÇÃO RECOMENDADA:",
@@ -37,7 +40,7 @@ class GeradorRelatorio:
             linhas.append(f"  * {ativo}: R$ {valor:.2f}")
             
         linhas.append("-" * 50)
-        linhas.append(f"Projeção do Patrimônio em {resultado_simulacao.anos_projecao} anos: R$ {resultado_simulacao.patrimonio_projetado:.2f}")
+        linhas.append(f"Projeção do Patrimônio em {resultado_simulacao.anos_projecao} anos: R$ {formatar_br(resultado_simulacao.patrimonio_projetado)}")
         linhas.append("-" * 50)
         linhas.append("Lembre-se: Invista com responsabilidade e consistência.")
         linhas.append("=" * 50)
