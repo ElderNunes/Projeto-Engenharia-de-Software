@@ -165,7 +165,10 @@ Formatador string que consome o `ResultadoSimulacao` e grava de forma atômica o
 2. **Robustez - Tratamento I/O (HU-05):** Inserir textos em locais que pedem dinheiro. Demonstrar a proteção do `cli_utils.py`.
 3. **Robustez - Regra de Negócio (RN-05):** Inserir despesas estouradas. Demonstrar o diagnóstico negativo bloqueando o usuário educadamente, sem derrubar a aplicação.
 
-**Sprint 4: Testes e Refatoração (16/06 a 19/06)**
-- Felipe: Responsável pela estratégia e configuração inicial dos Testes Automatizados utilizando o módulo `unittest`.
-- Elder: Responsável por liderar as rodadas de Refatoração do código para melhoria de design.
-- Guilherme: Responsável pela revisão da documentação final e fechamento do repositório.
+**Sprint 4: Testes Automatizados e Refatoração (16/06 a 19/06)**
+
+- **Divisão de Testes (unittest):** 
+  - **Felipe:** Escrita de testes unitários para a classe `motor_investimento.py` (Sucesso, Falha, Borda).
+  - **Guilherme:** Escrita de testes unitários para a classe `orcamento.py` e `projecao.py` (Sucesso, Falha, Borda).
+  - **Elder:** Escrita de testes unitários para a classe `perfil_risco.py` (Sucesso, Falha, Borda).
+- **Documentação de Qualidade:** Todos os membros preencherão o arquivo `docs/testes.md` documentando a estratégia utilizada e as lacunas (testes de UI/CLI) que ficaram de fora.

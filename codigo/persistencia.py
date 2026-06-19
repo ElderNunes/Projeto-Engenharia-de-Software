@@ -12,7 +12,8 @@ class GerenciadorDados:
 
     def __init__(self) -> None:
         if not hasattr(self, '_caminho_arquivo'):
-            self._caminho_arquivo: str = "dados_usuario.json"
+            diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+            self._caminho_arquivo: str = os.path.join(diretorio_atual, "dados_usuario.json")
 
     def carregar_dados(self) -> Dict[str, Any]:
         if not os.path.exists(self._caminho_arquivo):
