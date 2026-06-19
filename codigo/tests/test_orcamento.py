@@ -1,5 +1,10 @@
 import unittest
-from orcamento import GerenciadorOrcamento
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from codigo.orcamento import GerenciadorOrcamento
 
 class TestGerenciadorOrcamento(unittest.TestCase):
 

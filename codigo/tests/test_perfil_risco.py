@@ -1,5 +1,10 @@
 import unittest
-from perfil_risco import AvaliadorPerfilRisco
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from codigo.perfil_risco import AvaliadorPerfilRisco
 
 class TestAvaliadorPerfilRisco(unittest.TestCase):
     """Conjunto de testes unitários para a classe AvaliadorPerfilRisco."""

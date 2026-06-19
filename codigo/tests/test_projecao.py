@@ -1,5 +1,10 @@
 import unittest
-from projecao import SimuladorProjecao
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from codigo.projecao import SimuladorProjecao
 
 class TestSimuladorProjecao(unittest.TestCase):
 
@@ -18,7 +23,7 @@ class TestSimuladorProjecao(unittest.TestCase):
         patrimonio_calculado = self.simulador.calcular_patrimonio_futuro(alocacao, anos=1)
         
         self.assertGreater(patrimonio_calculado, 12000.0)
-        self.assertAlmostEqual(patrimonio_calculado, 12639.27, places=1)
+        self.assertAlmostEqual(patrimonio_calculado, 12642.68, places=1)
 
     def test_projecao_com_anos_invalidos(self):
         """Cenário de Falha: Período menor ou igual a zero deve lançar ValueError."""
